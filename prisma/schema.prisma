@@ -1,0 +1,87 @@
+// Prisma schema for Trinetraa Cyber Academy
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum RegistrationStatus {
+  PENDING_PAYMENT
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String
+  passwordHash String
+  role         Role     @default(STUDENT)
+  createdAt    DateTime @default(now())
+
+  registrations Registration[]
+}
+
+model Course {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  price         Int
+  originalPrice Int?
+  format        String
+  description   String
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  registrations Registration[]
+}
+
+model Registration {
+  id                String             @id @default(cuid())
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId          String
+  course            Course             @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  status            RegistrationStatus @default(PENDING_PAYMENT)
+  razorpayOrderId   String?            @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  amountPaid        Int?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([status])
+}
+
+model Enquiry {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  message   String
+  status    EnquiryStatus @default(NEW)
+  createdAt DateTime      @default(now())
+
+  @@index([status])
+}

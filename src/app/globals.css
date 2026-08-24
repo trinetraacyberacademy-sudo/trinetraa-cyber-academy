@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink-950: #050b16;
+  --color-ink-900: #0a1628;
+  --color-ink-850: #0d1c33;
+  --color-ink-800: #10233e;
+  --color-ink-700: #1b3559;
+  --color-ink-600: #2c4a72;
+  --color-ink-500: #3f5f8a;
+
+  --color-signal-50: #ecfeff;
+  --color-signal-100: #cffafe;
+  --color-signal-200: #a5f3fc;
+  --color-signal-400: #22d3ee;
+  --color-signal-500: #0891b2;
+  --color-signal-600: #0e7490;
+  --color-signal-700: #155e75;
+
+  --color-flare-50: #fff7ed;
+  --color-flare-100: #ffedd5;
+  --color-flare-200: #fed7aa;
+  --color-flare-400: #fb923c;
+  --color-flare-500: #f97316;
+  --color-flare-600: #ea580c;
+  --color-flare-700: #c2410c;
+
+  --animate-fade-up: fade-up 0.7s ease-out forwards;
+  --animate-pulse-slow: pulse-slow 5s ease-in-out infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.05);
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+}
+
+* {
+  border-color: #e2e8f0;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-signal-100);
+  color: var(--color-signal-700);
+}
+
+/* Subtle tech grid, tuned for light backgrounds */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.bg-grid-fine {
+  background-image:
+    linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #0e7490 0%, #0891b2 50%, #0e7490 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-shimmer {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  background-size: 200% 100%;
+}
+
+.mask-fade-b {
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.mask-fade-radial {
+  mask-image: radial-gradient(circle at center, black 40%, transparent 75%);
+  -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 75%);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+/* Reveal safety net (paired with the beforeInteractive script in layout.tsx):
+   force scroll-reveal content visible if Framer Motion never got to. Scoped to
+   the literal inline style Framer Motion writes for its hidden initial state,
+   so it never touches unrelated opacity:0 usages once JS/hydration is fine. */
+html.force-reveal [style*="opacity:0"] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
