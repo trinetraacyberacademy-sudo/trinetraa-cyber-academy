@@ -73,29 +73,64 @@ These three all live in `.env.local` (gitignored), not the Prisma-specific `.env
 2. `npm run dev`, go to `/register`, sign up, pick a course → you land on `/register/payment`.
 3. Click **Pay ₹X Now**. The Razorpay popup opens.
 4. In the popup, choose **Card** and enter:
-   - Card number: `4111 1111 1111 1111`
+   - Card number: `4100 2800 0000 1007` (Visa, Razorpay's documented **domestic** test card — generic numbers like `4111 1111 1111 1111` get rejected as non-domestic by their test-mode simulation)
    - Expiry: any future date (e.g. `12/30`)
    - CVV: any 3 digits (e.g. `123`)
    - Name: anything
-5. Submit. Razorpay's test mode auto-approves this card — no OTP needed for the standard test flow.
+5. If prompted for an OTP: **4–10 digits** (e.g. `123456`) simulates success.
 6. You should land on `/dashboard?payment=success` with the registration showing **Paid** and a receipt (amount, payment ID, date).
-7. To test a **failed** payment instead of step 4, use card `4000 0000 0000 0002` — Razorpay declines it and the checkout shows its own failure UI; you'll land back on the payment page with a "Try Again" button and the registration stays `PENDING_PAYMENT`/`FAILED`.
+7. To test a **failed** payment: same card, but enter an OTP of **3 digits or fewer** (e.g. `12`) — Razorpay's mock bank page uses OTP length as the success/failure switch. The registration stays `PENDING_PAYMENT`/flips to `FAILED` and the UI shows a "Try Again" button.
 8. To test the **webhook backup path**: close the Razorpay popup right after submitting the card (before it redirects back) — the `handler` callback never fires, but Razorpay's `payment.captured` webhook still arrives and should flip the registration to `PAID` on its own within a few seconds (needs step 3's webhook URL to be reachable, e.g. via `ngrok http 3000`).
 9. Check `/admin` as the seeded admin — the registration, amount paid, and Razorpay payment ID should all show up in the read-only table, and the revenue stat card should reflect it.
 
 Razorpay's full test card reference (other banks, UPI, netbanking test flows) is at [razorpay.com/docs/payments/payments/test-card-upi-details](https://razorpay.com/docs/payments/payments/test-card-upi-details/).
 
+## Deploying to Railway
+
+### How migrations run automatically
+
+`railway.json` sets a `preDeployCommand` (`npm run db:migrate:deploy`, i.e. `prisma migrate deploy`) — Railway runs this after every build, with full access to your env vars and the private network, and **aborts the deploy if it fails** rather than shipping code against a stale schema. `postinstall` runs `prisma generate` so the generated client exists before `next build` needs it (the `build` script also runs it defensively). No shadow database is needed in production — `migrate deploy` just applies whatever's pending in `prisma/migrations/`.
+
+### Environment variables (set in Railway's dashboard, not committed)
+
+| Variable | Value |
+|---|---|
+| `DATABASE_URL` | Railway's generated Postgres connection string (auto-available if you add a Postgres service in the same project — reference it as `${{Postgres.DATABASE_URL}}` instead of retyping it) |
+| `AUTH_SECRET` | A fresh secret — **do not reuse the local dev one committed to `.env`.** Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
+| `AUTH_URL` | `https://trinetraa.in` — optional (the app has `trustHost: true`, so it infers the URL from request headers), but explicit is safer behind a proxy |
+| `RAZORPAY_KEY_ID` | Your test-mode key ID (`rzp_test_...`) — do **not** switch to live keys until you've verified the deployed site end-to-end |
+| `RAZORPAY_KEY_SECRET` | Your test-mode key secret |
+| `RAZORPAY_WEBHOOK_SECRET` | Set when you create the webhook in Razorpay's dashboard (see below) |
+
+`SHADOW_DATABASE_URL` and the `ADMIN_*` vars are **not** needed here — the former is local-dev-only, and the admin account gets seeded once manually (see below), not on every deploy.
+
+### One-time production seed (creates the admin account)
+
+Run this from your own machine, pointed at Railway's `DATABASE_URL` (copy it from Railway's dashboard into a one-off shell, don't commit it):
+
+```bash
+DATABASE_URL="<railway's-connection-string>" ADMIN_EMAIL="you@trinetraa.in" ADMIN_PASSWORD="<a-real-password>" npm run db:seed
+```
+
+### Razorpay webhook
+
+Dashboard → Settings → Webhooks → Add New Webhook:
+- **URL:** `https://trinetraa.in/api/webhooks/razorpay`
+- **Events:** `payment.captured`, `payment.failed`
+- Set a secret there, then put the same value in Railway's `RAZORPAY_WEBHOOK_SECRET`
+
+The route verifies Razorpay's `x-razorpay-signature` header against this secret over the raw request body before touching anything — an unsigned or mismatched request gets a 400 and is never processed (see `src/app/api/webhooks/razorpay/route.ts`).
+
+### Connecting trinetraa.in (GoDaddy)
+
+1. In Railway, open your service → **Settings → Networking → Custom Domain** → add `trinetraa.in`. Railway will show you a record to add (type + value) — **use exactly what it shows you**, not a value from this doc, since it's generated per-project.
+2. In GoDaddy → your domain → **DNS Management**, add that record.
+   - If Railway gives you a **CNAME** for `www.trinetraa.in`: straightforward, add it as shown.
+   - If you're pointing the bare apex `trinetraa.in` (no `www`): standard DNS doesn't allow a CNAME at the root. Check what Railway's UI offers for apex domains (it may show an A record / ALIAS-style target instead) and use that. If GoDaddy doesn't support the exact record type Railway wants, the common workaround is: point `www.trinetraa.in` at Railway via CNAME, then use GoDaddy's **Domain Forwarding** to redirect the bare `trinetraa.in` → `https://www.trinetraa.in`.
+3. DNS propagation can take anywhere from a few minutes to a few hours. Railway's domain settings page shows a verification status once it sees the record.
+
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma on Railway](https://docs.railway.com) / [Railway config-as-code reference](https://docs.railway.com/reference/config-as-code)
+- [Razorpay test cards](https://razorpay.com/docs/payments/payments/test-card-details/)
