@@ -3,16 +3,22 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { signOut } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { LinkedInIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { navLinks, siteConfig } from "@/lib/site-data";
+import type { Session } from "next-auth";
 
-export function Navbar() {
+export function Navbar({ session }: { session: Session | null }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const user = session?.user;
+  const accountHref = user?.role === "ADMIN" ? "/admin" : "/dashboard";
+  const firstName = user?.name?.split(" ")[0];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -79,9 +85,28 @@ export function Navbar() {
               <InstagramIcon className="h-4 w-4" />
             </a>
           </div>
-          <Button href="/register" size="md">
-            Apply Now
-          </Button>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Link
+                href={accountHref}
+                className="text-sm font-medium text-slate-700 transition-colors hover:text-signal-700"
+              >
+                Hi, {firstName}
+              </Link>
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:text-slate-900"
+              >
+                <LogOut className="h-4 w-4" />
+                Log out
+              </button>
+            </div>
+          ) : (
+            <Button href="/register" size="md">
+              Apply Now
+            </Button>
+          )}
         </div>
 
         <button
@@ -114,9 +139,32 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <Button href="/register" size="md" className="mt-3 w-full">
-                Apply Now
-              </Button>
+              {user ? (
+                <div className="mt-3 flex flex-col gap-2">
+                  <Link
+                    href={accountHref}
+                    onClick={() => setOpen(false)}
+                    className="rounded-lg px-3 py-3 text-center text-base font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    Hi, {firstName}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      signOut({ callbackUrl: "/" });
+                    }}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-3 text-base font-medium text-slate-600 hover:border-slate-300 hover:text-slate-900"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Log out
+                  </button>
+                </div>
+              ) : (
+                <Button href="/register" size="md" className="mt-3 w-full">
+                  Apply Now
+                </Button>
+              )}
               <div className="mt-4 flex items-center justify-center gap-3 border-t border-slate-100 pt-4">
                 <a
                   href={siteConfig.linkedinUrl}
