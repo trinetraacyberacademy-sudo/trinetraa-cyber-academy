@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { razorpay } from "@/lib/razorpay";
+import { getRazorpay } from "@/lib/razorpay";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
   let amountPaid: number | null = null;
   try {
-    const payment = await razorpay.payments.fetch(paymentId);
+    const payment = await getRazorpay().payments.fetch(paymentId);
     amountPaid = typeof payment.amount === "string" ? parseInt(payment.amount, 10) : payment.amount;
   } catch {
     // Fall back to nothing — the row still gets marked PAID from a verified
