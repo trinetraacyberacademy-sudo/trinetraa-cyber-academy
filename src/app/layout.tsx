@@ -20,9 +20,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Trinetraa Cyber Academy | 6-Month Live SOC Analyst Training & Internship",
+  title: "Trinetraa Cyber Academy | 6-Month Live SOC Analyst Training Program",
   description:
-    "Stop reading about SOC work. Start closing tickets. A 6-month live SOC Analyst training + internship program with hands-on access to Splunk, CrowdStrike Falcon, Microsoft Azure/Entra ID and Mimecast.",
+    "Stop reading about SOC work. Start closing tickets. A 6-month live SOC Analyst training program with hands-on access to Splunk, CrowdStrike Falcon, Microsoft Azure/Entra ID and Mimecast.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

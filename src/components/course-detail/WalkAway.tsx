@@ -11,10 +11,10 @@ export function WalkAway() {
         <SectionHeading
           eyebrow="What You Walk Away With"
           title="Documentation that proves you did the work"
-          description="Every credential below is tied to real hands-on hours, not just attendance."
+          description="Tied to real hands-on hours across the program, not just attendance."
         />
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-3">
+        <div className="mx-auto mt-14 max-w-sm">
           {walkAwayItems.map((item, i) => {
             const Icon = iconMap[item.icon];
             return (

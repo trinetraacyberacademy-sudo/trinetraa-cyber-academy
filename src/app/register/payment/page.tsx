@@ -18,7 +18,7 @@ const includesByType: Record<string, string[]> = {
     "6-month live instructor-led training",
     "Hands-on Splunk, Falcon, Azure/Entra ID & Mimecast access",
     "Real incident ticket queue across 50+ categories",
-    "Internship track + 3 certificates on completion",
+    "Course completion certificate",
   ],
   workshop: [
     "3 live instructor-led online sessions",

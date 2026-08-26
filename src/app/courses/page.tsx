@@ -9,7 +9,7 @@ import { WorkshopSection } from "@/components/home/WorkshopSection";
 export const metadata: Metadata = {
   title: "Our Programs | Trinetraa Cyber Academy",
   description:
-    "Explore Trinetraa Cyber Academy's SOC training programs — from the 6-month live SOC Analyst Training + Internship Program to the 3-day live SOC workshop.",
+    "Explore Trinetraa Cyber Academy's SOC training programs — from the 6-month live SOC Analyst Training Program to the 3-day live SOC workshop.",
 };
 
 export default function CoursesPage() {
@@ -27,8 +27,8 @@ export default function CoursesPage() {
           </Reveal>
           <Reveal delay={0.08}>
             <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-              Whether you want a quick, hands-on taste of SOC work or a full job-ready
-              transformation, start here.
+              Whether you want a quick, hands-on taste of SOC work or a full
+              hands-on training program, start here.
             </p>
           </Reveal>
         </Container>

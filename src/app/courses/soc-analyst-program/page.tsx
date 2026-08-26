@@ -13,9 +13,9 @@ import { Pricing } from "@/components/home/Pricing";
 import { courseIncidentCategories } from "@/lib/site-data";
 
 export const metadata: Metadata = {
-  title: "SOC Analyst Training + Internship Program | Trinetraa Cyber Academy",
+  title: "SOC Analyst Training Program | Trinetraa Cyber Academy",
   description:
-    "A 6-month live SOC Analyst training + internship program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID and Mimecast. Full syllabus, incident categories, FAQs, and pricing.",
+    "A 6-month live SOC Analyst training program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID and Mimecast. Full syllabus, incident categories, FAQs, and pricing.",
 };
 
 export default function SocAnalystProgramPage() {

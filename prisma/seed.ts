@@ -37,22 +37,22 @@ async function main() {
   const socProgram = await prisma.course.upsert({
     where: { slug: "soc-analyst-program" },
     update: {
-      title: "SOC Analyst Training + Internship Program",
+      title: "SOC Analyst Training Program",
       price: 5999,
       originalPrice: 9999,
       format: "6 Months · Mon–Fri · Live Online",
       description:
-        "A 6-month live SOC Analyst training + internship program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — plus a real incident ticket queue, internship track, and placement support.",
+        "A 6-month live SOC Analyst training program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — plus a real incident ticket queue and placement assistance.",
       isActive: true,
     },
     create: {
       slug: "soc-analyst-program",
-      title: "SOC Analyst Training + Internship Program",
+      title: "SOC Analyst Training Program",
       price: 5999,
       originalPrice: 9999,
       format: "6 Months · Mon–Fri · Live Online",
       description:
-        "A 6-month live SOC Analyst training + internship program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — plus a real incident ticket queue, internship track, and placement support.",
+        "A 6-month live SOC Analyst training program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — plus a real incident ticket queue and placement assistance.",
       isActive: true,
     },
   });

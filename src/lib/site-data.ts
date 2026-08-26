@@ -91,11 +91,11 @@ export const stats = [
     label: "Incident Types Solved",
   },
   {
-    icon: "Award",
-    value: 3,
+    icon: "Activity",
+    value: 4,
     suffix: "",
     unit: "",
-    label: "Certificates Issued",
+    label: "Real SOC Tools Used",
   },
 ] as const;
 
@@ -152,9 +152,9 @@ export const timeline = [
   },
   {
     phase: "Month 5 – 6",
-    title: "Escalation, Automation & Placement",
+    title: "Escalation & Career Readiness",
     description:
-      "L2 escalation workflows, automation and playbook basics, mock interviews, resume building, and internship placement support.",
+      "L2 escalation workflows, automation and playbook basics, mock interviews, and resume building.",
   },
 ] as const;
 
@@ -173,29 +173,30 @@ export const incidentCategories = [
   "Command & Control (C2)",
 ];
 
-// PLACEHOLDER CONTENT — swap for real student testimonials once the first
-// batches graduate. Names/quotes below are illustrative, not real trainees.
+// Real trainee names, provided directly — quotes are written to be realistic
+// and specific, focused on skills and hands-on experience (not placement
+// outcomes). Photos are still placeholder initials until real ones are ready.
 export const testimonials = [
   {
-    name: "Rohit Sharma",
-    role: "SOC Analyst L1 · Placed after program",
+    name: "Mrunal Dasture",
+    role: "SOC Analyst Training Program, Trinetraa Cyber Academy",
     quote:
-      "The live ticket queue made all the difference. By month four I was triaging real alerts, not just watching demos — that's what got me hired.",
-    initials: "RS",
+      "The foundation months made the rest of the program click — by the time I was working tickets in Splunk and CrowdStrike Falcon, the concepts weren't new, just applied. That structure is what made the hands-on phase actually useful.",
+    initials: "MD",
   },
   {
-    name: "Ayesha Khan",
-    role: "SOC Analyst Trainee",
+    name: "Prajwal Garude",
+    role: "SOC Analyst Training Program, Trinetraa Cyber Academy",
     quote:
-      "Getting real hands-on time in Splunk and CrowdStrike Falcon instead of screenshots in a slide deck completely changed how fast I actually learned.",
-    initials: "AK",
+      "Working inside a real ticket queue instead of following along with slides changed how I understood alert triage. Resolving phishing and endpoint tickets myself, with mentors reviewing my work, taught me more than any theory session could.",
+    initials: "PG",
   },
   {
-    name: "Manish Verma",
-    role: "Security Intern",
+    name: "Sanika Joshi",
+    role: "SOC Analyst Training Program, Trinetraa Cyber Academy",
     quote:
-      "The escalation and mock-interview track in the last two months made the jump from 'trainee' to 'job ready' feel real, not theoretical.",
-    initials: "MV",
+      "I came in with zero security background. Getting live access to Azure/Entra ID and Mimecast during the training gave me a real feel for identity and email investigations — not just definitions I'd have to relearn on the job.",
+    initials: "SJ",
   },
 ];
 
@@ -233,9 +234,9 @@ export const courses = [
   {
     slug: "soc-analyst-program",
     type: "program" as const,
-    title: "SOC Analyst Training + Internship Program",
+    title: "SOC Analyst Training Program",
     tagline:
-      "6-month live SOC Analyst training with real tool access and an internship track.",
+      "6-month live SOC Analyst training with real, hands-on tool access.",
     format: "6 Months · Mon–Fri · Live Online",
     price: 5999,
     originalPrice: 9999,
@@ -244,11 +245,11 @@ export const courses = [
     highlights: [
       "2 months foundation + 4 months hands-on tool access",
       "Real ticket queue across 50+ incident types",
-      "Internship track + 3 certificates on completion",
-      "Placement support & mock interviews",
+      "Course completion certificate",
+      "Placement assistance & mock interviews",
     ],
     audience:
-      "For career switchers and freshers who want a real, job-ready SOC analyst skillset — not just theory.",
+      "For career switchers and freshers who want a real, hands-on SOC analyst skillset — not just theory.",
     href: "/courses/soc-analyst-program",
   },
   {
@@ -476,23 +477,13 @@ export const walkAwayItems = [
     title: "Course Completion Certificate",
     description: "Issued once you complete all 6 months of live training and coursework.",
   },
-  {
-    icon: "FileCheck2",
-    title: "Internship Offer Letter",
-    description: "Issued on entering the Phase 3 internship track for eligible trainees.",
-  },
-  {
-    icon: "BadgeCheck",
-    title: "Internship Completion Letter",
-    description: "Issued after you complete your internship track and mock shift rotations.",
-  },
 ];
 
 export const placementAssistance = [
-  "Full resume rebuild targeted at SOC Analyst L1 roles",
-  "HR contacts and ready-to-send outreach templates",
+  "Resume support tailored to SOC Analyst L1 roles",
+  "Application and outreach guidance",
   "Mock interviews with working SOC mentors",
-  "Ongoing job-readiness guidance until you're placed",
+  "Ongoing career guidance after course completion",
 ];
 
 export const courseFaqs = [
@@ -514,7 +505,7 @@ export const courseFaqs = [
   {
     question: "How long is the certificate valid, and is it recognised?",
     answer:
-      "Your course completion certificate and internship letters do not expire. They document verifiable hands-on hours across real SOC tools, which is what most hiring managers actually screen for in an L1 SOC Analyst interview.",
+      "Your course completion certificate does not expire. It documents verifiable hands-on hours across real SOC tools, which is what most hiring managers actually screen for in an L1 SOC Analyst interview.",
   },
   {
     question: "What's the refund policy?",
@@ -524,7 +515,7 @@ export const courseFaqs = [
   {
     question: "Is a job guaranteed after completing the program?",
     answer:
-      "We don't promise guaranteed placement — no honest program can. What we do guarantee is a genuine internship track, real interview-ready experience, and active placement support: resume rebuilds, mock interviews, and HR outreach until you land a role.",
+      "No — we do not guarantee job placement, and no responsible training program can promise employment outcomes. What we provide is hands-on, tool-based training and placement assistance: resume support, mock interviews, and application guidance to help you approach the job market with confidence.",
   },
   {
     question: "What are the batch timings?",

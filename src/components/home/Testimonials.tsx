@@ -10,8 +10,8 @@ export function Testimonials() {
       <Container>
         <SectionHeading
           eyebrow="Trainee Voices"
-          title="What trainees say after month six"
-          description="Hear directly from analysts who trained with us and made the jump into real SOC roles."
+          title="What trainees say about the program"
+          description="Hear directly from trainees about the hands-on experience and skills built during the program."
         />
 
         <div className="mt-14 grid gap-6 lg:grid-cols-3">

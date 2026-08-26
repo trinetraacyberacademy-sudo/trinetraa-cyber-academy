@@ -11,8 +11,8 @@ const includes = [
   "6-month live instructor-led training",
   "Hands-on Splunk, Falcon, Azure/Entra ID & Mimecast access",
   "Real incident ticket queue across 50+ categories",
-  "Internship track + 3 certificates on completion",
-  "Placement support & mock interviews",
+  "Course completion certificate",
+  "Placement assistance & mock interviews",
 ];
 
 export function Pricing() {

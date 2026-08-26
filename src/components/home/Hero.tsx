@@ -64,7 +64,7 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mt-6 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg"
           >
-            A 6-month <span className="font-medium text-slate-800">live SOC Analyst training + internship</span> program
+            A 6-month <span className="font-medium text-slate-800">live SOC Analyst training</span> program
             built around real tools, not theory. Get hands-on access to Splunk, CrowdStrike
             Falcon, Microsoft Azure/Entra ID, and Mimecast — and graduate having actually
             worked incidents, not just studied them.
@@ -105,7 +105,7 @@ export function Hero() {
               size="lg"
               icon={<BookOpenText className="h-4 w-4" />}
             >
-              View Curriculum
+              View Full Curriculum
             </Button>
           </motion.div>
 
@@ -116,7 +116,7 @@ export function Hero() {
             className="mt-8 flex items-center gap-2 text-xs text-slate-500"
           >
             <Radio className="h-3.5 w-3.5 text-signal-600" />
-            Live sessions · Real incident queues · Internship certificate included
+            Live sessions · Real incident queues · Certificate on completion
           </motion.div>
         </div>
       </Container>

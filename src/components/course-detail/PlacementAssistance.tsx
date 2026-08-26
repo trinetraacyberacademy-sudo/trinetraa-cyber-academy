@@ -9,9 +9,9 @@ export function PlacementAssistance() {
     <section className="bg-slate-50 py-24">
       <Container>
         <SectionHeading
-          eyebrow="Placement Support"
-          title="We stay with you past graduation day"
-          description="The internship track isn't the finish line — here's what continues after it."
+          eyebrow="Placement Assistance"
+          title="Support as you start applying"
+          description="A supporting feature available to trainees after course completion — not a job guarantee."
         />
 
         <Reveal delay={0.15}>

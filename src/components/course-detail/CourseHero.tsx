@@ -45,7 +45,7 @@ export function CourseHero() {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="mt-6 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl"
             >
-              SOC Analyst Training + Internship Program
+              SOC Analyst Training Program
             </motion.h1>
 
             <motion.p
@@ -64,8 +64,8 @@ export function CourseHero() {
               className="mt-4 max-w-xl text-base leading-7 text-slate-600"
             >
               Six months of live, instructor-led training built around real tools —
-              Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — with a genuine
-              internship track and a live incident ticket queue you actually work.
+              Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — with a live
+              incident ticket queue you actually work.
             </motion.p>
 
             <motion.div
@@ -111,7 +111,7 @@ export function CourseHero() {
               6 Months · Mon–Fri · Live Online
             </div>
             <p className="mt-5 text-xs leading-5 text-slate-500">
-              Includes internship track, 3 certificates, and full placement support.
+              Includes course completion certificate and placement assistance.
             </p>
           </motion.div>
         </div>

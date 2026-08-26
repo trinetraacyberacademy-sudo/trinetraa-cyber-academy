@@ -10,8 +10,8 @@ export function ProgramTimeline() {
       <Container>
         <SectionHeading
           eyebrow="Program Path"
-          title="Six months, three phases, one job-ready analyst"
-          description="Every phase builds directly on the last — from fundamentals to a live incident queue to escalation and placement."
+          title="Six months, three phases, one structured path"
+          description="Every phase builds directly on the last — from fundamentals to a live incident queue to escalation and career readiness."
         />
 
         <div className="relative mt-16 lg:mt-20">
@@ -61,7 +61,7 @@ export function ProgramTimeline() {
         <Reveal delay={0.2}>
           <div className="mx-auto mt-16 flex max-w-xl items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-4 text-center text-sm text-slate-600 shadow-sm">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-signal-600" />
-            Internship + certificate track runs alongside Phase 3 for eligible trainees.
+            Placement assistance (resume support, mock interviews) is available during Phase 3.
           </div>
         </Reveal>
       </Container>
