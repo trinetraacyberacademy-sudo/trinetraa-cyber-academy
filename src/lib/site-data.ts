@@ -25,7 +25,7 @@ export const workshop = {
   eyebrow: "Limited-Time Workshop",
   title: "3-Day Live SOC Workshop",
   tagline: "A fast, hands-on preview of real SOC analyst work — before you commit to the full program.",
-  dateRange: "28 – 30 August 2026",
+  dateRange: "4 – 6 September 2026",
   format: "2 hours/day · Live Online",
   price: 499,
   includesCertificate: true,
@@ -39,21 +39,21 @@ export const workshop = {
   days: [
     {
       day: "Day 1",
-      date: "28 Aug",
+      date: "4 Sept",
       title: "Cybersecurity Roadmap & Fundamentals",
       description:
         "Explore cybersecurity as a career, the SOC analyst path in particular, and where the field stands today — setting the stage for the two hands-on days ahead.",
     },
     {
       day: "Day 2",
-      date: "29 Aug",
+      date: "5 Sept",
       title: "Core Attack Concepts",
       description:
         "Get inside the mind of an attacker: how phishing campaigns work, the major malware types and how they behave, and the other threat concepts analysts face every shift.",
     },
     {
       day: "Day 3",
-      date: "30 Aug",
+      date: "6 Sept",
       title: "Live Alert Handling Demo",
       description:
         "Watch a real-style alert get triaged from start to finish — see exactly how a phishing alert and other detections are investigated and handled inside real SOC tools.",
@@ -260,7 +260,7 @@ export const courses = [
     format: "3 Days · 2 hrs/day · Live Online",
     price: 499,
     originalPrice: null,
-    badgeText: "28 – 30 Aug 2026 · Certificate Included",
+    badgeText: "4 – 6 Sept 2026 · Certificate Included",
     badgeTone: "flare" as const,
     highlights: [
       "3 live instructor-led sessions, 2 hours/day",
