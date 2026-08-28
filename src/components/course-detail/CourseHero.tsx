@@ -111,7 +111,7 @@ export function CourseHero() {
               6 Months · Mon–Fri · Live Online
             </div>
             <p className="mt-5 text-xs leading-5 text-slate-500">
-              Includes course completion certificate and placement assistance.
+              Includes course completion certificate and career guidance.
             </p>
           </motion.div>
         </div>

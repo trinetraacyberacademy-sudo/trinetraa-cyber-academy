@@ -12,7 +12,7 @@ const includes = [
   "Hands-on Splunk, Falcon, Azure/Entra ID & Mimecast access",
   "Real incident ticket queue across 50+ categories",
   "Course completion certificate",
-  "Placement assistance & mock interviews",
+  "Career guidance & mock interviews",
 ];
 
 export function Pricing() {

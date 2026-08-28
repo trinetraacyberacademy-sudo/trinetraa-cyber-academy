@@ -7,7 +7,7 @@ import { ToolsAccess } from "@/components/home/ToolsAccess";
 import { IncidentCategories } from "@/components/home/IncidentCategories";
 import { InterviewReady } from "@/components/course-detail/InterviewReady";
 import { WalkAway } from "@/components/course-detail/WalkAway";
-import { PlacementAssistance } from "@/components/course-detail/PlacementAssistance";
+import { CareerGuidance } from "@/components/course-detail/CareerGuidance";
 import { FaqSection } from "@/components/course-detail/FaqSection";
 import { Pricing } from "@/components/home/Pricing";
 import { courseIncidentCategories } from "@/lib/site-data";
@@ -35,7 +35,7 @@ export default function SocAnalystProgramPage() {
       />
       <InterviewReady />
       <WalkAway />
-      <PlacementAssistance />
+      <CareerGuidance />
       <FaqSection />
       <Pricing />
     </>

@@ -42,7 +42,7 @@ async function main() {
       originalPrice: 9999,
       format: "6 Months · Mon–Fri · Live Online",
       description:
-        "A 6-month live SOC Analyst training program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — plus a real incident ticket queue and placement assistance.",
+        "A 6-month live SOC Analyst training program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — plus a real incident ticket queue and career guidance.",
       isActive: true,
     },
     create: {
@@ -52,7 +52,7 @@ async function main() {
       originalPrice: 9999,
       format: "6 Months · Mon–Fri · Live Online",
       description:
-        "A 6-month live SOC Analyst training program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — plus a real incident ticket queue and placement assistance.",
+        "A 6-month live SOC Analyst training program with hands-on access to Splunk, CrowdStrike Falcon, Azure/Entra ID, and Mimecast — plus a real incident ticket queue and career guidance.",
       isActive: true,
     },
   });

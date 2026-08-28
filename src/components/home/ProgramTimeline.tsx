@@ -61,7 +61,7 @@ export function ProgramTimeline() {
         <Reveal delay={0.2}>
           <div className="mx-auto mt-16 flex max-w-xl items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-white px-6 py-4 text-center text-sm text-slate-600 shadow-sm">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-signal-600" />
-            Placement assistance (resume support, mock interviews) is available during Phase 3.
+            Career guidance (resume support, mock interviews) is available during Phase 3.
           </div>
         </Reveal>
       </Container>

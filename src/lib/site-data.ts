@@ -174,7 +174,7 @@ export const incidentCategories = [
 ];
 
 // Real trainee names, provided directly — quotes are written to be realistic
-// and specific, focused on skills and hands-on experience (not placement
+// and specific, focused on skills and hands-on experience (not employment
 // outcomes). Photos are still placeholder initials until real ones are ready.
 export const testimonials = [
   {
@@ -246,7 +246,7 @@ export const courses = [
       "2 months foundation + 4 months hands-on tool access",
       "Real ticket queue across 50+ incident types",
       "Course completion certificate",
-      "Placement assistance & mock interviews",
+      "Career guidance & mock interviews",
     ],
     audience:
       "For career switchers and freshers who want a real, hands-on SOC analyst skillset — not just theory.",
@@ -479,7 +479,7 @@ export const walkAwayItems = [
   },
 ];
 
-export const placementAssistance = [
+export const careerGuidance = [
   "Resume support tailored to SOC Analyst L1 roles",
   "Application and outreach guidance",
   "Mock interviews with working SOC mentors",
@@ -515,7 +515,7 @@ export const courseFaqs = [
   {
     question: "Is a job guaranteed after completing the program?",
     answer:
-      "No — we do not guarantee job placement, and no responsible training program can promise employment outcomes. What we provide is hands-on, tool-based training and placement assistance: resume support, mock interviews, and application guidance to help you approach the job market with confidence.",
+      "No — we do not guarantee a job after the program, and no responsible training program can promise employment outcomes. What we provide is hands-on, tool-based training and career guidance: resume support, mock interviews, and application guidance to help you approach the job market with confidence.",
   },
   {
     question: "What are the batch timings?",
