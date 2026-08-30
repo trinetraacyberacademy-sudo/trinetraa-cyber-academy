@@ -4,9 +4,13 @@ import { motion } from "framer-motion";
 import { ArrowRight, BookOpenText, Radio, Users } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { siteConfig } from "@/lib/site-data";
+import { siteConfig, waLink } from "@/lib/site-data";
 
 const toolPills = ["Splunk", "CrowdStrike Falcon", "Azure / Entra ID", "Mimecast"];
+
+const applyWaLink = waLink(
+  "Hi, I'd like to enroll at Trinetraa Cyber Academy. Could you share the enrollment and payment details?",
+);
 
 export function Hero() {
   return (
@@ -93,7 +97,7 @@ export function Hero() {
             className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
           >
             <Button
-              href="/register"
+              href={applyWaLink}
               size="lg"
               icon={<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />}
             >

@@ -65,7 +65,9 @@ export function Pricing() {
               </ul>
 
               <Button
-                href="/register?course=soc-analyst-program"
+                href={waLink(
+                  "Hi, I'd like to enroll in the SOC Analyst Training Program. Could you share the enrollment and payment details?",
+                )}
                 size="lg"
                 className="mt-8 w-full"
                 icon={<Sparkles className="h-4 w-4" />}

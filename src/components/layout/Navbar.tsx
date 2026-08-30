@@ -9,7 +9,11 @@ import { LogOut, Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { LinkedInIcon, InstagramIcon } from "@/components/ui/SocialIcons";
-import { navLinks, siteConfig } from "@/lib/site-data";
+import { navLinks, siteConfig, waLink } from "@/lib/site-data";
+
+const applyWaLink = waLink(
+  "Hi, I'd like to enroll at Trinetraa Cyber Academy. Could you share the enrollment and payment details?",
+);
 import type { Session } from "next-auth";
 
 export function Navbar({ session }: { session: Session | null }) {
@@ -103,7 +107,7 @@ export function Navbar({ session }: { session: Session | null }) {
               </button>
             </div>
           ) : (
-            <Button href="/register" size="md">
+            <Button href={applyWaLink} size="md">
               Apply Now
             </Button>
           )}
@@ -161,7 +165,7 @@ export function Navbar({ session }: { session: Session | null }) {
                   </button>
                 </div>
               ) : (
-                <Button href="/register" size="md" className="mt-3 w-full">
+                <Button href={applyWaLink} size="md" className="mt-3 w-full">
                   Apply Now
                 </Button>
               )}

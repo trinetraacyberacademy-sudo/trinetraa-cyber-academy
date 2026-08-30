@@ -1,10 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { ArrowRight, Calendar, Clock, Sparkles } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { workshop } from "@/lib/site-data";
+import { waLink, workshop } from "@/lib/site-data";
 
 export function WorkshopBanner() {
   return (
@@ -38,13 +37,17 @@ export function WorkshopBanner() {
             </span>
           </p>
 
-          <Link
-            href="/register?course=workshop"
+          <a
+            href={waLink(
+              `Hi, I'd like to reserve a seat for the ${workshop.title}. Could you share the payment details?`,
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-flare-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-flare-600"
           >
             ₹{workshop.price} — Reserve Your Seat
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-          </Link>
+          </a>
         </motion.div>
       </Container>
     </section>

@@ -68,7 +68,12 @@ export function WorkshopSection() {
               </div>
 
               <div className="flex flex-col items-stretch gap-3 lg:min-w-[220px]">
-                <Button href="/register?course=workshop" size="lg">
+                <Button
+                  href={waLink(
+                    `Hi, I'd like to reserve a seat for the ${workshop.title}. Could you share the payment details?`,
+                  )}
+                  size="lg"
+                >
                   Reserve Your Seat
                 </Button>
                 <a

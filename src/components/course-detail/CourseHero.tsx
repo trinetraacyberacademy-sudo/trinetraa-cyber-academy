@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 import { ArrowRight, CalendarClock, ListChecks, Users } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { siteConfig } from "@/lib/site-data";
+import { siteConfig, waLink } from "@/lib/site-data";
+
+const applyWaLink = waLink(
+  "Hi, I'd like to enroll in the SOC Analyst Training Program. Could you share the enrollment and payment details?",
+);
 
 export function CourseHero() {
   return (
@@ -75,7 +79,7 @@ export function CourseHero() {
               className="mt-8 flex flex-col gap-4 sm:flex-row"
             >
               <Button
-                href="/register?course=soc-analyst-program"
+                href={applyWaLink}
                 size="lg"
                 icon={<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />}
               >
