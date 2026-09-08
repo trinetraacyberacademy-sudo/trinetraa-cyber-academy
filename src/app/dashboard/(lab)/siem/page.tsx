@@ -3,7 +3,9 @@ import Link from "next/link";
 import { Search as SearchIcon, Ticket as TicketIcon } from "lucide-react";
 import { requirePaidStudent } from "@/lib/lab-access";
 import { prisma } from "@/lib/prisma";
+import { parseTrinetraQL } from "@/lib/trinetraql";
 import { SiemSearchBar } from "@/components/lab/SiemSearchBar";
+import { SiemTimeline } from "@/components/lab/SiemTimeline";
 import type { LogSourceType, Prisma } from "@/generated/prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -19,13 +21,6 @@ const sourceLabels: Record<LogSourceType, string> = {
   NETWORK: "Network",
 };
 
-function matchingSourceTypes(query: string): LogSourceType[] {
-  const q = query.toLowerCase();
-  return (Object.keys(sourceLabels) as LogSourceType[]).filter(
-    (key) => key.toLowerCase().includes(q.replace(/\s+/g, "_")) || sourceLabels[key].toLowerCase().includes(q),
-  );
-}
-
 export default async function SiemPage({
   searchParams,
 }: {
@@ -35,26 +30,30 @@ export default async function SiemPage({
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
 
+  const parsed = query ? parseTrinetraQL(query) : null;
+
   let results: Prisma.LogEventGetPayload<{
     include: { employee: true; relatedTicket: true };
   }>[] = [];
 
-  if (query) {
-    const sourceMatches = matchingSourceTypes(query);
+  if (parsed && !parsed.isEmpty) {
+    const timeFilter: Prisma.LogEventWhereInput = {};
+    if (parsed.earliest || parsed.latest) {
+      timeFilter.timestamp = {
+        ...(parsed.earliest ? { gte: parsed.earliest } : {}),
+        ...(parsed.latest ? { lte: parsed.latest } : {}),
+      };
+    }
+
+    const where: Prisma.LogEventWhereInput = parsed.where
+      ? { AND: [parsed.where, timeFilter] }
+      : timeFilter;
 
     results = await prisma.logEvent.findMany({
-      where: {
-        OR: [
-          { eventSummary: { contains: query, mode: "insensitive" } },
-          { rawLogLine: { contains: query, mode: "insensitive" } },
-          { employee: { name: { contains: query, mode: "insensitive" } } },
-          { employee: { email: { contains: query, mode: "insensitive" } } },
-          ...(sourceMatches.length > 0 ? [{ sourceType: { in: sourceMatches } }] : []),
-        ],
-      },
+      where,
       orderBy: { timestamp: "desc" },
       include: { employee: true, relatedTicket: true },
-      take: 100,
+      take: 200,
     });
   }
 
@@ -62,28 +61,37 @@ export default async function SiemPage({
     <div>
       <h1 className="font-display text-2xl font-bold text-white">TrinetraSIEM</h1>
       <p className="mt-1 text-sm text-slate-400">
-        Search log events by keyword — try an employee name, email, source type, or a term
-        from a ticket.
+        Search with TrinetraQL — field filters, boolean operators, and time ranges, just like a
+        real SIEM.
       </p>
 
       <div className="mt-6">
         <SiemSearchBar initialQuery={query} />
       </div>
 
+      {parsed && parsed.explanation.length > 0 && (
+        <p className="mt-3 text-xs text-slate-500">
+          Parsed as:{" "}
+          <span className="font-mono text-slate-400">{parsed.explanation.join(" · ")}</span>
+        </p>
+      )}
+
       <div className="mt-4">
         {!query ? (
           <div className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-ink-900/60 px-6 py-16 text-center">
             <SearchIcon className="h-6 w-6 text-slate-500" />
-            <p className="text-sm text-slate-400">Enter a search term to query the log index.</p>
+            <p className="text-sm text-slate-400">Enter a TrinetraQL query to search the log index.</p>
           </div>
         ) : results.length === 0 ? (
           <div className="rounded-xl border border-white/10 bg-ink-900/60 px-6 py-16 text-center">
             <p className="text-sm text-slate-400">
-              No log events matched &ldquo;{query}&rdquo;.
+              No log events matched <span className="font-mono">{query}</span>.
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
+            <SiemTimeline timestamps={results.map((r) => r.timestamp)} />
+
             <p className="text-xs text-slate-500">
               {results.length} result{results.length === 1 ? "" : "s"}
             </p>

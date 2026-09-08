@@ -23,6 +23,13 @@ const employees = [
   email: `${e.name.toLowerCase().replace(/\s+/g, ".")}@${DOMAIN}`,
 }));
 
+// Fake file hashes (SHA-256 shaped) reused across logs so students can pivot
+// a hash found in a ticket into a SIEM search and find every machine it hit.
+const MALWARE_SHA256 =
+  "a3f5c9d8e1b2f4a6" + "7c2e9b4d1f6a8c05" + "3e7b1a9c5d2f8064" + "b6d4f2a0c8e6194b";
+const BENIGN_SHA256 =
+  "1a2b3c4d5e6f7081" + "9c8b7a6f5e4d3c2b" + "1a2b3c4d5e6f7081" + "9c8b7a6f5e4d3c2b";
+
 type TicketSeed = {
   ticketNumber: string;
   title: string;
@@ -35,6 +42,7 @@ type TicketSeed = {
     subject: string;
     body: string;
     attachmentName?: string;
+    attachmentHash?: string;
     linkUrl?: string;
   };
   logs: {
@@ -51,7 +59,7 @@ const tickets: TicketSeed[] = [
     ticketNumber: "TRQ-1001",
     title: "Suspicious Password Reset Email Reported by Sales Rep",
     description:
-      "Sophie Turner (Sales) reported an email urging her to verify her password via a link before it \"expires.\" She says she may have clicked the link and entered her credentials.",
+      "Sophie Turner (Sales) reported an email urging her to verify her password via a link before it \"expires.\" She says she may have clicked the link and entered her credentials. The same email was sent company-wide — check who else received or clicked it.",
     category: "PHISHING",
     severity: "HIGH",
     reportedEmail: {
@@ -69,7 +77,48 @@ const tickets: TicketSeed[] = [
         eventSummary:
           "Email from spoofed IT helpdesk domain delivered to Sophie Turner's inbox (SPF/DKIM failed)",
         rawLogLine:
-          '2026-09-01 08:14:22 UTC EMAIL_GATEWAY action=DELIVERED from=it-helpdesk@fakecorp-support-verify.com to=sophie.turner@fakecorp-demo.com subject="Urgent: Your Password Will Expire in 24 Hours - Verify Now" spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.8/10 msg_id=<a1f92c3d@fakecorp-support-verify.com>',
+          '2026-09-01 08:14:22 UTC EMAIL_GATEWAY action=DELIVERED from=it-helpdesk@fakecorp-support-verify.com to=sophie.turner@fakecorp-demo.com subject="Urgent: Your Password Will Expire in 24 Hours - Verify Now" url=http://fakecorp-portal-verify.com/reset-password spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.8/10 msg_id=<a1f92c3d@fakecorp-support-verify.com>',
+      },
+      {
+        timestamp: "2026-09-01T08:14:45Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "karan.mehta@fakecorp-demo.com",
+        eventSummary: "Same phishing email also delivered to Karan Mehta (Sales)",
+        rawLogLine:
+          '2026-09-01 08:14:45 UTC EMAIL_GATEWAY action=DELIVERED from=it-helpdesk@fakecorp-support-verify.com to=karan.mehta@fakecorp-demo.com subject="Urgent: Your Password Will Expire in 24 Hours - Verify Now" url=http://fakecorp-portal-verify.com/reset-password spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.8/10 msg_id=<a1f92c3d@fakecorp-support-verify.com>',
+      },
+      {
+        timestamp: "2026-09-01T08:15:02Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "rachel.kim@fakecorp-demo.com",
+        eventSummary: "Same phishing email also delivered to Rachel Kim (IT)",
+        rawLogLine:
+          '2026-09-01 08:15:02 UTC EMAIL_GATEWAY action=DELIVERED from=it-helpdesk@fakecorp-support-verify.com to=rachel.kim@fakecorp-demo.com subject="Urgent: Your Password Will Expire in 24 Hours - Verify Now" url=http://fakecorp-portal-verify.com/reset-password spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.8/10 msg_id=<a1f92c3d@fakecorp-support-verify.com>',
+      },
+      {
+        timestamp: "2026-09-01T08:15:18Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "angela.foster@fakecorp-demo.com",
+        eventSummary: "Same phishing email also delivered to Angela Foster (Executive)",
+        rawLogLine:
+          '2026-09-01 08:15:18 UTC EMAIL_GATEWAY action=DELIVERED from=it-helpdesk@fakecorp-support-verify.com to=angela.foster@fakecorp-demo.com subject="Urgent: Your Password Will Expire in 24 Hours - Verify Now" url=http://fakecorp-portal-verify.com/reset-password spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.8/10 msg_id=<a1f92c3d@fakecorp-support-verify.com>',
+      },
+      {
+        timestamp: "2026-09-01T08:15:41Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "meera.iyer@fakecorp-demo.com",
+        eventSummary: "Same phishing email also delivered to Meera Iyer (Finance)",
+        rawLogLine:
+          '2026-09-01 08:15:41 UTC EMAIL_GATEWAY action=DELIVERED from=it-helpdesk@fakecorp-support-verify.com to=meera.iyer@fakecorp-demo.com subject="Urgent: Your Password Will Expire in 24 Hours - Verify Now" url=http://fakecorp-portal-verify.com/reset-password spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.8/10 msg_id=<a1f92c3d@fakecorp-support-verify.com>',
+      },
+      {
+        timestamp: "2026-09-01T08:17:30Z",
+        sourceType: "NETWORK",
+        employeeEmail: "karan.mehta@fakecorp-demo.com",
+        eventSummary:
+          "Karan Mehta's workstation visited the phishing link but the session ended before any credentials were submitted",
+        rawLogLine:
+          '2026-09-01T08:17:30Z NETWORK_EVENT user=karan.mehta@fakecorp-demo.com src_ip=10.20.4.55 dest_url=http://fakecorp-portal-verify.com/reset-password action=ALLOWED category=UNCATEGORIZED http_method=GET status=200 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
       },
       {
         timestamp: "2026-09-01T08:22:51Z",
@@ -104,7 +153,7 @@ const tickets: TicketSeed[] = [
     ticketNumber: "TRQ-1002",
     title: "Malicious Invoice Attachment Reported – Endpoint Activity Suspected",
     description:
-      "Robert Chen (Accounts Payable) received an \"overdue invoice\" email with a .docx attachment. His workstation has been behaving unusually since he opened it.",
+      "Robert Chen (Accounts Payable) received an \"overdue invoice\" email with a .docx attachment. His workstation has been behaving unusually since he opened it. The same file hash was seen elsewhere — check who else has it.",
     category: "PHISHING",
     severity: "CRITICAL",
     reportedEmail: {
@@ -113,6 +162,7 @@ const tickets: TicketSeed[] = [
       subject: "Overdue Invoice #48291 - Immediate Action Required",
       body: "Dear Robert,\n\nPlease find attached the overdue invoice (#48291) for services rendered last quarter. Our records show this invoice remains unpaid and is now 45 days past due.\n\nKindly review the attached document and process payment at your earliest convenience to avoid late fees and service interruption.\n\nPlease confirm receipt of this email.\n\nRegards,\nBilling Department",
       attachmentName: "Invoice_48291_Overdue.docx",
+      attachmentHash: MALWARE_SHA256,
     },
     logs: [
       {
@@ -121,8 +171,28 @@ const tickets: TicketSeed[] = [
         employeeEmail: "robert.chen@fakecorp-demo.com",
         eventSummary:
           "Email with .docx attachment from spoofed billing domain delivered to Robert Chen",
-        rawLogLine:
-          '2026-09-02 10:47:03 UTC EMAIL_GATEWAY action=DELIVERED from=billing@fakecorp-invoices-net.com to=robert.chen@fakecorp-demo.com subject="Overdue Invoice #48291 - Immediate Action Required" attachment="Invoice_48291_Overdue.docx" spf=FAIL dkim=NONE spam_score=6.2/10 msg_id=<7b2e9f01@fakecorp-invoices-net.com>',
+        rawLogLine: `2026-09-02 10:47:03 UTC EMAIL_GATEWAY action=DELIVERED from=billing@fakecorp-invoices-net.com to=robert.chen@fakecorp-demo.com subject="Overdue Invoice #48291 - Immediate Action Required" attachment="Invoice_48291_Overdue.docx" attachment_hash=${MALWARE_SHA256} spf=FAIL dkim=NONE spam_score=6.2/10 msg_id=<7b2e9f01@fakecorp-invoices-net.com>`,
+      },
+      {
+        timestamp: "2026-09-02T10:48:11Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "sandra.wilson@fakecorp-demo.com",
+        eventSummary: "Same attachment (identical hash) also delivered to Sandra Wilson (HR)",
+        rawLogLine: `2026-09-02 10:48:11 UTC EMAIL_GATEWAY action=DELIVERED from=billing@fakecorp-invoices-net.com to=sandra.wilson@fakecorp-demo.com subject="Overdue Invoice #48291 - Immediate Action Required" attachment="Invoice_48291_Overdue.docx" attachment_hash=${MALWARE_SHA256} spf=FAIL dkim=NONE spam_score=6.2/10 msg_id=<7b2e9f01@fakecorp-invoices-net.com>`,
+      },
+      {
+        timestamp: "2026-09-02T10:48:47Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "tom.bradley@fakecorp-demo.com",
+        eventSummary: "Same attachment also delivered to Tom Bradley (IT) — not opened",
+        rawLogLine: `2026-09-02 10:48:47 UTC EMAIL_GATEWAY action=DELIVERED from=billing@fakecorp-invoices-net.com to=tom.bradley@fakecorp-demo.com subject="Overdue Invoice #48291 - Immediate Action Required" attachment="Invoice_48291_Overdue.docx" attachment_hash=${MALWARE_SHA256} spf=FAIL dkim=NONE spam_score=6.2/10 msg_id=<7b2e9f01@fakecorp-invoices-net.com>`,
+      },
+      {
+        timestamp: "2026-09-02T10:49:20Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "daniel.wu@fakecorp-demo.com",
+        eventSummary: "Same attachment also delivered to Daniel Wu (Executive) — not opened",
+        rawLogLine: `2026-09-02 10:49:20 UTC EMAIL_GATEWAY action=DELIVERED from=billing@fakecorp-invoices-net.com to=daniel.wu@fakecorp-demo.com subject="Overdue Invoice #48291 - Immediate Action Required" attachment="Invoice_48291_Overdue.docx" attachment_hash=${MALWARE_SHA256} spf=FAIL dkim=NONE spam_score=6.2/10 msg_id=<7b2e9f01@fakecorp-invoices-net.com>`,
       },
       {
         timestamp: "2026-09-02T11:03:15Z",
@@ -130,8 +200,7 @@ const tickets: TicketSeed[] = [
         employeeEmail: "robert.chen@fakecorp-demo.com",
         eventSummary:
           "WINWORD.EXE spawned PowerShell with an encoded command shortly after Robert opened the attachment",
-        rawLogLine:
-          'EndpointID=WKS-RC-0847 EventID=1(ProcessCreate) Time=2026-09-02T11:03:15Z ParentImage=C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -nop -w hidden -enc JABzAD0ATgBlAHcALQBPAGIAagBlAGMAdAA..." User=FAKECORP\\robert.chen',
+        rawLogLine: `EndpointID=WKS-RC-0847 EventID=1(ProcessCreate) Time=2026-09-02T11:03:15Z ParentImage=C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -nop -w hidden -enc JABzAD0ATgBlAHcALQBPAGIAagBlAGMAdAA..." sha256=${MALWARE_SHA256} User=FAKECORP\\robert.chen`,
       },
       {
         timestamp: "2026-09-02T11:03:22Z",
@@ -150,13 +219,29 @@ const tickets: TicketSeed[] = [
         rawLogLine:
           'EndpointID=WKS-RC-0847 EventID=13(RegistryEvent) Time=2026-09-02T11:04:01Z TargetObject=HKU\\S-1-5-21-...\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\UpdateSvc Details="C:\\Users\\robert.chen\\AppData\\Roaming\\svchost32.exe" Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe User=FAKECORP\\robert.chen',
       },
+      {
+        timestamp: "2026-09-02T11:12:08Z",
+        sourceType: "ENDPOINT",
+        employeeEmail: "sandra.wilson@fakecorp-demo.com",
+        eventSummary:
+          "WINWORD.EXE spawned the same PowerShell payload on Sandra Wilson's workstation after she also opened the attachment",
+        rawLogLine: `EndpointID=WKS-SW-0512 EventID=1(ProcessCreate) Time=2026-09-02T11:12:08Z ParentImage=C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE Image=C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe CommandLine="powershell.exe -nop -w hidden -enc JABzAD0ATgBlAHcALQBPAGIAagBlAGMAdAA..." sha256=${MALWARE_SHA256} User=FAKECORP\\sandra.wilson`,
+      },
+      {
+        timestamp: "2026-09-02T11:12:15Z",
+        sourceType: "ENDPOINT",
+        employeeEmail: "sandra.wilson@fakecorp-demo.com",
+        eventSummary:
+          "Endpoint AV quarantined the payload on Sandra Wilson's machine before it could establish persistence",
+        rawLogLine: `EndpointID=WKS-SW-0512 EventID=AV_DETECTION Time=2026-09-02T11:12:15Z result=QUARANTINED threat_name=Trojan.PowerShell.Downloader sha256=${MALWARE_SHA256} engine=FakeDefender-v12.4 User=FAKECORP\\sandra.wilson`,
+      },
     ],
   },
   {
     ticketNumber: "TRQ-1003",
     title: "Suspected CEO Fraud / Wire Transfer Request",
     description:
-      "Priya Nair (Finance) received an email appearing to be from CEO Michael Ross requesting an urgent, confidential wire transfer or gift card purchase. She held off and reported it instead.",
+      "Priya Nair (Finance) received an email appearing to be from CEO Michael Ross requesting an urgent, confidential wire transfer or gift card purchase. She held off and reported it instead. This one is a targeted spear-phish, not a mass campaign — check whether anyone else received it before you conclude scope.",
     category: "PHISHING",
     severity: "HIGH",
     reportedEmail: {
@@ -189,7 +274,7 @@ const tickets: TicketSeed[] = [
     ticketNumber: "TRQ-1004",
     title: "Phishing Link Leads to Confirmed Account Compromise",
     description:
-      "David Okafor (HR Recruiter) clicked a link to a fake careers portal to \"review a resume.\" He later noticed an unexpected MFA prompt and reported it.",
+      "David Okafor (HR Recruiter) clicked a link to a fake careers portal to \"review a resume.\" He later noticed an unexpected MFA prompt and reported it. Same campaign hit other inboxes — check who else clicked and whether any of those attempts succeeded.",
     category: "PHISHING",
     severity: "CRITICAL",
     reportedEmail: {
@@ -206,7 +291,31 @@ const tickets: TicketSeed[] = [
         employeeEmail: "david.okafor@fakecorp-demo.com",
         eventSummary: "Email with fake careers portal link delivered to Recruiter David Okafor",
         rawLogLine:
-          '2026-09-04 14:12:40 UTC EMAIL_GATEWAY action=DELIVERED from=careers-portal-notify@fakecorp-jobs-verify.net to=david.okafor@fakecorp-demo.com subject="New Candidate Application - Action Required to View Resume" spf=FAIL dkim=FAIL spam_score=6.9/10 msg_id=<55d1a8b3@fakecorp-jobs-verify.net>',
+          '2026-09-04 14:12:40 UTC EMAIL_GATEWAY action=DELIVERED from=careers-portal-notify@fakecorp-jobs-verify.net to=david.okafor@fakecorp-demo.com subject="New Candidate Application - Action Required to View Resume" url=http://fakecorp-careers-secure.net/portal/login spf=FAIL dkim=FAIL spam_score=6.9/10 msg_id=<55d1a8b3@fakecorp-jobs-verify.net>',
+      },
+      {
+        timestamp: "2026-09-04T14:13:02Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "james.patel@fakecorp-demo.com",
+        eventSummary: "Same email also delivered to James Patel (IT)",
+        rawLogLine:
+          '2026-09-04 14:13:02 UTC EMAIL_GATEWAY action=DELIVERED from=careers-portal-notify@fakecorp-jobs-verify.net to=james.patel@fakecorp-demo.com subject="New Candidate Application - Action Required to View Resume" url=http://fakecorp-careers-secure.net/portal/login spf=FAIL dkim=FAIL spam_score=6.9/10 msg_id=<55d1a8b3@fakecorp-jobs-verify.net>',
+      },
+      {
+        timestamp: "2026-09-04T14:13:35Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "linda.martinez@fakecorp-demo.com",
+        eventSummary: "Same email also delivered to Linda Martinez (HR) — not clicked",
+        rawLogLine:
+          '2026-09-04 14:13:35 UTC EMAIL_GATEWAY action=DELIVERED from=careers-portal-notify@fakecorp-jobs-verify.net to=linda.martinez@fakecorp-demo.com subject="New Candidate Application - Action Required to View Resume" url=http://fakecorp-careers-secure.net/portal/login spf=FAIL dkim=FAIL spam_score=6.9/10 msg_id=<55d1a8b3@fakecorp-jobs-verify.net>',
+      },
+      {
+        timestamp: "2026-09-04T14:14:01Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "tom.bradley@fakecorp-demo.com",
+        eventSummary: "Same email also delivered to Tom Bradley (IT) — not clicked",
+        rawLogLine:
+          '2026-09-04 14:14:01 UTC EMAIL_GATEWAY action=DELIVERED from=careers-portal-notify@fakecorp-jobs-verify.net to=tom.bradley@fakecorp-demo.com subject="New Candidate Application - Action Required to View Resume" url=http://fakecorp-careers-secure.net/portal/login spf=FAIL dkim=FAIL spam_score=6.9/10 msg_id=<55d1a8b3@fakecorp-jobs-verify.net>',
       },
       {
         timestamp: "2026-09-04T14:19:52Z",
@@ -227,6 +336,15 @@ const tickets: TicketSeed[] = [
           '2026-09-04T14:20:10Z AUTH_EVENT event=MAILBOX_RULE_CREATED user=david.okafor@fakecorp-demo.com rule_name="Inbox Rule 1" forward_to=d.okafor.backup@protonmail.com session_id=1a9f8e3c02 risk_level=CRITICAL',
       },
       {
+        timestamp: "2026-09-04T14:25:10Z",
+        sourceType: "AUTHENTICATION",
+        employeeEmail: "james.patel@fakecorp-demo.com",
+        eventSummary:
+          "A login attempt for James Patel from the same suspicious Lagos IP was blocked when he denied the MFA push",
+        rawLogLine:
+          '2026-09-04T14:25:10Z AUTH_EVENT user=james.patel@fakecorp-demo.com result=BLOCKED auth_method=PASSWORD+MFA ip=103.75.190.22 geo="Lagos, Nigeria" device=Unknown-Android-Chrome mfa_status=DENIED reason="User did not approve MFA push" risk_level=HIGH session_id=7d2f9a1c44',
+      },
+      {
         timestamp: "2026-09-04T15:45:33Z",
         sourceType: "AUTHENTICATION",
         employeeEmail: "david.okafor@fakecorp-demo.com",
@@ -241,7 +359,7 @@ const tickets: TicketSeed[] = [
     ticketNumber: "TRQ-1005",
     title: "Reported Attachment from External Vendor – Review Requested",
     description:
-      "Alex Johnson (Sales) received a PDF proposal from an external partner he'd recently spoken with and reported it out of caution since the sender was unfamiliar to the mail system.",
+      "Alex Johnson (Sales) received a PDF proposal from an external partner he'd recently spoken with and reported it out of caution since the sender was unfamiliar to the mail system. This is a genuine 1:1 business email, not a campaign — searching its hash elsewhere should come back clean.",
     category: "PHISHING",
     severity: "LOW",
     reportedEmail: {
@@ -250,6 +368,7 @@ const tickets: TicketSeed[] = [
       subject: "Q3 Partnership Proposal - Attached for Review",
       body: "Hello Alex,\n\nThank you for your time on our call last week. As discussed, please find attached our Q3 partnership proposal for your review.\n\nWe'd welcome the opportunity to discuss this further at your convenience. Please let us know if you have any questions.\n\nBest regards,\nJennifer Osei\nPartner Supply Co.",
       attachmentName: "Q3_Partnership_Proposal.pdf",
+      attachmentHash: BENIGN_SHA256,
     },
     logs: [
       {
@@ -258,8 +377,7 @@ const tickets: TicketSeed[] = [
         employeeEmail: "alex.johnson@fakecorp-demo.com",
         eventSummary:
           "Email with PDF attachment from an external partner delivered to Sales Manager Alex Johnson, passed standard filtering",
-        rawLogLine:
-          '2026-09-05 13:20:05 UTC EMAIL_GATEWAY action=DELIVERED from=accounts@partnersupplyco-demo.com to=alex.johnson@fakecorp-demo.com subject="Q3 Partnership Proposal - Attached for Review" attachment="Q3_Partnership_Proposal.pdf" spf=PASS dkim=PASS dmarc=PASS spam_score=0.4/10 msg_id=<f02b8a11@partnersupplyco-demo.com>',
+        rawLogLine: `2026-09-05 13:20:05 UTC EMAIL_GATEWAY action=DELIVERED from=accounts@partnersupplyco-demo.com to=alex.johnson@fakecorp-demo.com subject="Q3 Partnership Proposal - Attached for Review" attachment="Q3_Partnership_Proposal.pdf" attachment_hash=${BENIGN_SHA256} spf=PASS dkim=PASS dmarc=PASS spam_score=0.4/10 msg_id=<f02b8a11@partnersupplyco-demo.com>`,
       },
       {
         timestamp: "2026-09-05T13:41:52Z",
@@ -267,8 +385,7 @@ const tickets: TicketSeed[] = [
         employeeEmail: "alex.johnson@fakecorp-demo.com",
         eventSummary:
           "PDF opened normally in the default viewer on Alex Johnson's workstation — no child process spawned",
-        rawLogLine:
-          'EndpointID=WKS-AJ-0392 EventID=1(ProcessCreate) Time=2026-09-05T13:41:52Z ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe CommandLine="Acrobat.exe \\"Q3_Partnership_Proposal.pdf\\"" User=FAKECORP\\alex.johnson',
+        rawLogLine: `EndpointID=WKS-AJ-0392 EventID=1(ProcessCreate) Time=2026-09-05T13:41:52Z ParentImage=C:\\Windows\\explorer.exe Image=C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe CommandLine="Acrobat.exe \\"Q3_Partnership_Proposal.pdf\\"" sha256=${BENIGN_SHA256} User=FAKECORP\\alex.johnson`,
       },
       {
         timestamp: "2026-09-05T14:15:00Z",
@@ -328,6 +445,7 @@ export async function seedLabEnvironment(prisma: PrismaClient) {
         subject: t.reportedEmail.subject,
         body: t.reportedEmail.body,
         attachmentName: t.reportedEmail.attachmentName,
+        attachmentHash: t.reportedEmail.attachmentHash,
         linkUrl: t.reportedEmail.linkUrl,
       },
       create: {
@@ -337,6 +455,7 @@ export async function seedLabEnvironment(prisma: PrismaClient) {
         subject: t.reportedEmail.subject,
         body: t.reportedEmail.body,
         attachmentName: t.reportedEmail.attachmentName,
+        attachmentHash: t.reportedEmail.attachmentHash,
         linkUrl: t.reportedEmail.linkUrl,
       },
     });

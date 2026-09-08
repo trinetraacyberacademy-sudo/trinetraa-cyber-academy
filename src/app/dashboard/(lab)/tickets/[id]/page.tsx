@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Mail, Paperclip, Link2, Search } from "lucide-react";
+import { ArrowLeft, Fingerprint, Mail, Paperclip, Link2, Search } from "lucide-react";
 import { requirePaidStudent } from "@/lib/lab-access";
 import { prisma } from "@/lib/prisma";
 import { SeverityBadge, TicketStatusBadge, CategoryBadge } from "@/components/lab/badges";
 import { TicketActions } from "@/components/lab/TicketActions";
+import { AssignToMeButton } from "@/components/lab/AssignToMeButton";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +27,15 @@ export default async function TicketDetailPage({
     include: {
       reportedEmail: { include: { toEmployee: true } },
       logEvents: { orderBy: { timestamp: "asc" }, include: { employee: true } },
+      assignedToUser: { select: { id: true, name: true } },
     },
   });
 
-  if (!ticket || ticket.assignedToUserId !== user.id) {
+  if (!ticket) {
     notFound();
   }
+
+  const isMine = ticket.assignedToUserId === user.id;
 
   return (
     <div>
@@ -43,19 +47,63 @@ export default async function TicketDetailPage({
         Back to queue
       </Link>
 
-      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <span className="font-mono text-xs text-signal-400">{ticket.ticketNumber}</span>
-          <h1 className="mt-1 font-display text-2xl font-bold text-white">{ticket.title}</h1>
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <CategoryBadge category={ticket.category} />
-            <SeverityBadge severity={ticket.severity} />
-            <TicketStatusBadge status={ticket.status} />
-          </div>
-        </div>
+      <div className="mt-4">
+        <h1 className="font-display text-2xl font-bold text-white">{ticket.title}</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-300">{ticket.description}</p>
       </div>
 
-      <p className="mt-5 max-w-3xl text-sm leading-6 text-slate-300">{ticket.description}</p>
+      <div className="mt-5 overflow-hidden rounded-xl border border-white/10 bg-ink-900/60">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-5 py-4 text-xs sm:grid-cols-4">
+          <div>
+            <p className="text-slate-500">Number</p>
+            <p className="mt-1 font-mono text-signal-400">{ticket.ticketNumber}</p>
+          </div>
+          <div>
+            <p className="text-slate-500">Category / Severity</p>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              <CategoryBadge category={ticket.category} />
+              <SeverityBadge severity={ticket.severity} />
+            </div>
+          </div>
+          <div>
+            <p className="text-slate-500">Status</p>
+            <div className="mt-1">
+              <TicketStatusBadge status={ticket.status} />
+            </div>
+          </div>
+          <div>
+            <p className="text-slate-500">Assigned To</p>
+            <div className="mt-1 flex items-center gap-2">
+              <span className="font-medium text-white">
+                {ticket.assignedToUser ? (isMine ? "You" : ticket.assignedToUser.name) : "Unassigned"}
+              </span>
+              {!isMine && <AssignToMeButton ticketId={ticket.id} />}
+            </div>
+          </div>
+          <div>
+            <p className="text-slate-500">Opened</p>
+            <p className="mt-1 text-slate-300">
+              {ticket.createdAt.toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </p>
+          </div>
+          {ticket.resolvedAt && (
+            <div>
+              <p className="text-slate-500">Resolved</p>
+              <p className="mt-1 text-slate-300">
+                {ticket.resolvedAt.toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
@@ -96,6 +144,22 @@ export default async function TicketDetailPage({
                     <span className="font-mono">{ticket.reportedEmail.attachmentName}</span>
                   </div>
                 )}
+                {ticket.reportedEmail.attachmentHash && (
+                  <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
+                    <Fingerprint className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                    <span className="font-mono break-all">
+                      {ticket.reportedEmail.attachmentHash}
+                    </span>
+                    <Link
+                      href={`/dashboard/siem?q=${encodeURIComponent(
+                        `hash=${ticket.reportedEmail.attachmentHash}`,
+                      )}`}
+                      className="ml-auto shrink-0 font-sans font-medium text-signal-400 hover:text-signal-300"
+                    >
+                      Search hash
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -106,9 +170,7 @@ export default async function TicketDetailPage({
                 Correlated Log Events ({ticket.logEvents.length})
               </p>
               <Link
-                href={`/dashboard/siem?q=${encodeURIComponent(
-                  ticket.reportedEmail?.toEmployee?.name ?? ticket.ticketNumber,
-                )}`}
+                href={`/dashboard/siem?q=${encodeURIComponent(`ticket=${ticket.ticketNumber}`)}`}
                 className="inline-flex items-center gap-1.5 text-xs font-medium text-signal-400 hover:text-signal-300"
               >
                 <Search className="h-3 w-3" />
@@ -130,6 +192,7 @@ export default async function TicketDetailPage({
                         minute: "2-digit",
                       })}
                     </span>
+                    {log.employee && <span>{log.employee.name}</span>}
                   </div>
                   <p className="mt-1.5 text-sm text-slate-300">{log.eventSummary}</p>
                   <pre className="mt-2 overflow-x-auto rounded-md bg-ink-950 p-3 font-mono text-[11px] leading-5 text-emerald-300/90">
@@ -141,13 +204,25 @@ export default async function TicketDetailPage({
           </div>
         </div>
 
-        <TicketActions
-          ticketId={ticket.id}
-          status={ticket.status}
-          investigationNotes={ticket.investigationNotes}
-          resolution={ticket.resolution}
-          resolutionNotes={ticket.resolutionNotes}
-        />
+        {isMine ? (
+          <TicketActions
+            ticketId={ticket.id}
+            status={ticket.status}
+            investigationNotes={ticket.investigationNotes}
+            resolution={ticket.resolution}
+            resolutionNotes={ticket.resolutionNotes}
+          />
+        ) : (
+          <div className="flex h-fit flex-col items-start gap-3 rounded-xl border border-white/10 bg-ink-900/60 p-5">
+            <p className="text-sm font-semibold text-white">
+              {ticket.assignedToUser ? `Assigned to ${ticket.assignedToUser.name}` : "Unassigned"}
+            </p>
+            <p className="text-xs text-slate-400">
+              Assign this ticket to yourself to add investigation notes, escalate, or close it.
+            </p>
+            <AssignToMeButton ticketId={ticket.id} />
+          </div>
+        )}
       </div>
     </div>
   );

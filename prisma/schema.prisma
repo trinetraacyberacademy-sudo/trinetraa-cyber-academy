@@ -119,6 +119,7 @@ model ReportedEmail {
   subject        String
   body           String
   attachmentName String?
+  attachmentHash String?
   linkUrl        String?
 }
 

@@ -6,10 +6,25 @@ import { prisma } from "@/lib/prisma";
 
 async function assertOwnedTicket(ticketId: string, userId: string) {
   const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } });
-  if (!ticket || ticket.assignedToUserId !== userId) {
+  if (!ticket) {
     throw new Error("Ticket not found.");
   }
+  if (ticket.assignedToUserId !== userId) {
+    throw new Error("Assign this ticket to yourself before working it.");
+  }
   return ticket;
+}
+
+export async function assignToMe(ticketId: string) {
+  const user = await requirePaidStudent();
+
+  await prisma.ticket.update({
+    where: { id: ticketId },
+    data: { assignedToUserId: user.id },
+  });
+
+  revalidatePath(`/dashboard/tickets/${ticketId}`);
+  revalidatePath("/dashboard/tickets");
 }
 
 export async function saveInvestigationNotes(ticketId: string, notes: string) {
