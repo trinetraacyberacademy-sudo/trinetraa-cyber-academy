@@ -37,6 +37,14 @@ export default async function TicketDetailPage({
 
   const isMine = ticket.assignedToUserId === user.id;
 
+  const emailDeliveryLog = ticket.reportedEmail
+    ? ticket.logEvents.find(
+        (log) =>
+          log.sourceType === "EMAIL_GATEWAY" &&
+          log.employeeId === ticket.reportedEmail?.toEmployeeId,
+      )
+    : undefined;
+
   return (
     <div>
       <Link
@@ -126,6 +134,20 @@ export default async function TicketDetailPage({
                   </span>
                   <span className="text-slate-500">Subject</span>
                   <span className="font-medium text-white">{ticket.reportedEmail.subject}</span>
+                  {emailDeliveryLog && (
+                    <>
+                      <span className="text-slate-500">Date</span>
+                      <span className="text-slate-300">
+                        {emailDeliveryLog.timestamp.toLocaleString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </>
+                  )}
                 </div>
 
                 <div className="rounded-lg border border-white/10 bg-ink-950 p-4 whitespace-pre-wrap text-slate-300">

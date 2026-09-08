@@ -72,7 +72,7 @@ function tokenize(query: string): Token[] {
   return tokens;
 }
 
-function parseRelativeOrAbsoluteDate(value: string, endOfDay: boolean): Date | null {
+export function parseRelativeOrAbsoluteDate(value: string, endOfDay: boolean): Date | null {
   const relMatch = /^-(\d+)([mhdw])$/i.exec(value);
   if (relMatch) {
     const amount = parseInt(relMatch[1], 10);

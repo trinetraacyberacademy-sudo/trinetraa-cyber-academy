@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { HelpCircle, Search } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { HelpCircle } from "lucide-react";
 
 const examples = [
   { query: "sourcetype=AUTHENTICATION geo", note: "keyword + field filter" },
@@ -19,10 +19,13 @@ export function SiemSearchBar({ initialQuery }: { initialQuery: string }) {
   const [value, setValue] = useState(initialQuery);
   const [showHelp, setShowHelp] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   function runQuery(q: string) {
     const params = new URLSearchParams();
     if (q.trim()) params.set("q", q.trim());
+    const range = searchParams.get("range");
+    if (range) params.set("range", range);
     router.push(`/dashboard/siem?${params.toString()}`);
   }
 
@@ -33,20 +36,23 @@ export function SiemSearchBar({ initialQuery }: { initialQuery: string }) {
 
   return (
     <div className="relative">
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-500" />
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder='sourcetype=EMAIL_GATEWAY sender="..." earliest=-7d'
-            className="w-full rounded-lg border border-white/10 bg-ink-900 py-2.5 pr-4 pl-9 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-signal-500 focus:outline-none"
-          />
-        </div>
+      <form
+        onSubmit={handleSubmit}
+        className="flex items-stretch overflow-hidden rounded-lg border border-white/10 bg-ink-900 focus-within:border-signal-500"
+      >
+        <span className="flex items-center border-r border-white/10 bg-white/[0.03] px-3 font-mono text-sm text-slate-500 select-none">
+          search
+        </span>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder='sourcetype=EMAIL_GATEWAY sender="..." earliest=-7d'
+          className="flex-1 bg-transparent px-3 py-2.5 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none"
+        />
         <button
           type="submit"
-          className="rounded-lg bg-signal-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-signal-500"
+          className="border-l border-white/10 bg-signal-600 px-5 text-sm font-semibold text-white hover:bg-signal-500"
         >
           Search
         </button>
@@ -54,7 +60,7 @@ export function SiemSearchBar({ initialQuery }: { initialQuery: string }) {
           type="button"
           onClick={() => setShowHelp((v) => !v)}
           aria-label="Query syntax help"
-          className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
+          className={`border-l px-3 text-sm font-medium transition-colors ${
             showHelp
               ? "border-signal-500/50 bg-signal-500/10 text-signal-300"
               : "border-white/10 text-slate-400 hover:text-white"
