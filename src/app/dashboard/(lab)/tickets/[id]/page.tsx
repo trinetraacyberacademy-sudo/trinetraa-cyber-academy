@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { SeverityBadge, TicketStatusBadge, CategoryBadge } from "@/components/lab/badges";
 import { TicketActions } from "@/components/lab/TicketActions";
 import { AssignToMeButton } from "@/components/lab/AssignToMeButton";
+import { EmailHeadersBlock } from "@/components/lab/EmailHeadersBlock";
 
 export const dynamic = "force-dynamic";
 
@@ -149,6 +150,10 @@ export default async function TicketDetailPage({
                     </>
                   )}
                 </div>
+
+                {ticket.reportedEmail.rawHeaders && (
+                  <EmailHeadersBlock rawHeaders={ticket.reportedEmail.rawHeaders} />
+                )}
 
                 <div className="rounded-lg border border-white/10 bg-ink-950 p-4 whitespace-pre-wrap text-slate-300">
                   {ticket.reportedEmail.body}

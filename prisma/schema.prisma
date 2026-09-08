@@ -118,6 +118,7 @@ model ReportedEmail {
   toEmployee     FakeEmployee? @relation(fields: [toEmployeeId], references: [id], onDelete: SetNull)
   subject        String
   body           String
+  rawHeaders     String?
   attachmentName String?
   attachmentHash String?
   linkUrl        String?

@@ -29,6 +29,8 @@ const MALWARE_SHA256 =
   "a3f5c9d8e1b2f4a6" + "7c2e9b4d1f6a8c05" + "3e7b1a9c5d2f8064" + "b6d4f2a0c8e6194b";
 const BENIGN_SHA256 =
   "1a2b3c4d5e6f7081" + "9c8b7a6f5e4d3c2b" + "1a2b3c4d5e6f7081" + "9c8b7a6f5e4d3c2b";
+const ESIGN_MALWARE_SHA256 =
+  "c4e8b0d29a1f6357" + "8d2a6c0e4f81b3d5" + "047c9e1b3a5d7f60" + "82c4e6a80d2f4b6e";
 
 type TicketSeed = {
   ticketNumber: string;
@@ -41,6 +43,7 @@ type TicketSeed = {
     toEmployeeEmail: string;
     subject: string;
     body: string;
+    rawHeaders?: string;
     attachmentName?: string;
     attachmentHash?: string;
     linkUrl?: string;
@@ -67,6 +70,25 @@ const tickets: TicketSeed[] = [
       toEmployeeEmail: "sophie.turner@fakecorp-demo.com",
       subject: "Urgent: Your Password Will Expire in 24 Hours – Verify Now",
       body: "Dear Sophie Turner,\n\nOur records indicate that your FakeCorp network password is set to expire within 24 hours. To avoid disruption to your account access, please verify your credentials immediately using the secure link below.\n\n[Verify My Password Now]\n\nFailure to verify within 24 hours will result in temporary suspension of your account and email access.\n\nThank you for your prompt attention.\n\nIT Helpdesk Team\nFakeCorp Industries",
+      rawHeaders:
+        "Return-Path: <bounce@fakecorp-support-verify.com>\n" +
+        "Received: from mail.fakecorp-support-verify.com (unknown [185.220.101.47])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTP id 4X1Qh2K9\n" +
+        "\tfor <sophie.turner@fakecorp-demo.com>; Tue, 01 Sep 2026 08:14:20 +0000\n" +
+        "Message-ID: <a1f92c3d@fakecorp-support-verify.com>\n" +
+        'From: "IT Helpdesk" <it-helpdesk@fakecorp-support-verify.com>\n' +
+        "To: sophie.turner@fakecorp-demo.com\n" +
+        "Subject: Urgent: Your Password Will Expire in 24 Hours - Verify Now\n" +
+        "Date: Tue, 01 Sep 2026 08:14:19 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: text/html; charset="UTF-8"\n' +
+        "X-Originating-IP: [185.220.101.47]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=fail (sender IP is 185.220.101.47) smtp.mailfrom=it-helpdesk@fakecorp-support-verify.com;\n" +
+        "  dkim=fail (no signature) header.d=none;\n" +
+        "  dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=fakecorp-support-verify.com\n" +
+        "Received-SPF: fail (mx.fakecorp-demo.com: domain of fakecorp-support-verify.com\n" +
+        "  does not designate 185.220.101.47 as permitted sender)",
       linkUrl: "http://fakecorp-portal-verify.com/reset-password",
     },
     logs: [
@@ -161,6 +183,25 @@ const tickets: TicketSeed[] = [
       toEmployeeEmail: "robert.chen@fakecorp-demo.com",
       subject: "Overdue Invoice #48291 - Immediate Action Required",
       body: "Dear Robert,\n\nPlease find attached the overdue invoice (#48291) for services rendered last quarter. Our records show this invoice remains unpaid and is now 45 days past due.\n\nKindly review the attached document and process payment at your earliest convenience to avoid late fees and service interruption.\n\nPlease confirm receipt of this email.\n\nRegards,\nBilling Department",
+      rawHeaders:
+        "Return-Path: <bounce@fakecorp-invoices-net.com>\n" +
+        "Received: from mail.fakecorp-invoices-net.com (unknown [91.219.237.40])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTP id 8B3Fk1L2\n" +
+        "\tfor <robert.chen@fakecorp-demo.com>; Wed, 02 Sep 2026 10:47:01 +0000\n" +
+        "Message-ID: <7b2e9f01@fakecorp-invoices-net.com>\n" +
+        'From: "Billing Department" <billing@fakecorp-invoices-net.com>\n' +
+        "To: robert.chen@fakecorp-demo.com\n" +
+        "Subject: Overdue Invoice #48291 - Immediate Action Required\n" +
+        "Date: Wed, 02 Sep 2026 10:46:58 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: multipart/mixed; boundary="=_boundary_invoice48291"\n' +
+        "X-Originating-IP: [91.219.237.40]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=fail (sender IP is 91.219.237.40) smtp.mailfrom=billing@fakecorp-invoices-net.com;\n" +
+        "  dkim=none (no signature);\n" +
+        "  dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=fakecorp-invoices-net.com\n" +
+        "Received-SPF: fail (mx.fakecorp-demo.com: domain of fakecorp-invoices-net.com\n" +
+        "  does not designate 91.219.237.40 as permitted sender)",
       attachmentName: "Invoice_48291_Overdue.docx",
       attachmentHash: MALWARE_SHA256,
     },
@@ -249,6 +290,26 @@ const tickets: TicketSeed[] = [
       toEmployeeEmail: "priya.nair@fakecorp-demo.com",
       subject: "Quick Task – Confidential",
       body: "Priya,\n\nI need you to handle something for me quickly and confidentially. I'm currently in back-to-back meetings and can't take calls right now.\n\nWe're finalizing an urgent vendor payment that needs to go out today — I'll explain the details when I'm free, but for now I need you to process a wire transfer of $18,500 to the account I'll send separately, or alternatively purchase $2,000 in Amazon gift cards if the transfer can't be processed in time.\n\nPlease keep this between us for now until the deal is publicly announced. Let me know once it's done.\n\nThanks,\nMichael Ross\nCEO, FakeCorp Industries\nSent from my iPhone",
+      rawHeaders:
+        "Return-Path: <bounce@fakecorp-demo.co>\n" +
+        "Received: from vps-22-104.hosting-provider.net (unknown [172.104.22.9])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTP id 1A9c3D7e\n" +
+        "\tfor <priya.nair@fakecorp-demo.com>; Thu, 03 Sep 2026 09:02:09 +0000\n" +
+        "Message-ID: <c93a1e02@fakecorp-demo.co>\n" +
+        'From: "Michael Ross" <michael.ross.ceo@fakecorp-demo.co>\n' +
+        "Reply-To: m.rossceo1972@protonmail.com\n" +
+        "To: priya.nair@fakecorp-demo.com\n" +
+        "Subject: Quick Task - Confidential\n" +
+        "Date: Thu, 03 Sep 2026 09:02:07 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: text/plain; charset="UTF-8"\n' +
+        "X-Originating-IP: [172.104.22.9]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=fail (sender IP is 172.104.22.9) smtp.mailfrom=michael.ross.ceo@fakecorp-demo.co;\n" +
+        "  dkim=none (no signature);\n" +
+        "  dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=fakecorp-demo.co\n" +
+        "Received-SPF: fail (mx.fakecorp-demo.com: domain of fakecorp-demo.co\n" +
+        "  does not designate 172.104.22.9 as permitted sender)",
     },
     logs: [
       {
@@ -282,6 +343,25 @@ const tickets: TicketSeed[] = [
       toEmployeeEmail: "david.okafor@fakecorp-demo.com",
       subject: "New Candidate Application - Action Required to View Resume",
       body: "Hi David,\n\nA new candidate has submitted an application for the Senior Analyst position and included additional documents that require your review through our secure candidate portal.\n\nPlease log in using the link below to view the full application and resume before the position closes.\n\n[View Candidate Application]\n\nThis link will expire in 48 hours.\n\nBest,\nFakeCorp Careers Team",
+      rawHeaders:
+        "Return-Path: <bounce@fakecorp-jobs-verify.net>\n" +
+        "Received: from mail.fakecorp-jobs-verify.net (unknown [194.5.250.18])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTP id 2E7bA0c1\n" +
+        "\tfor <david.okafor@fakecorp-demo.com>; Fri, 04 Sep 2026 14:12:38 +0000\n" +
+        "Message-ID: <55d1a8b3@fakecorp-jobs-verify.net>\n" +
+        'From: "FakeCorp Careers Team" <careers-portal-notify@fakecorp-jobs-verify.net>\n' +
+        "To: david.okafor@fakecorp-demo.com\n" +
+        "Subject: New Candidate Application - Action Required to View Resume\n" +
+        "Date: Fri, 04 Sep 2026 14:12:35 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: text/html; charset="UTF-8"\n' +
+        "X-Originating-IP: [194.5.250.18]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=fail (sender IP is 194.5.250.18) smtp.mailfrom=careers-portal-notify@fakecorp-jobs-verify.net;\n" +
+        "  dkim=fail (body hash did not verify) header.d=fakecorp-jobs-verify.net;\n" +
+        "  dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=fakecorp-jobs-verify.net\n" +
+        "Received-SPF: fail (mx.fakecorp-demo.com: domain of fakecorp-jobs-verify.net\n" +
+        "  does not designate 194.5.250.18 as permitted sender)",
       linkUrl: "http://fakecorp-careers-secure.net/portal/login",
     },
     logs: [
@@ -367,6 +447,25 @@ const tickets: TicketSeed[] = [
       toEmployeeEmail: "alex.johnson@fakecorp-demo.com",
       subject: "Q3 Partnership Proposal - Attached for Review",
       body: "Hello Alex,\n\nThank you for your time on our call last week. As discussed, please find attached our Q3 partnership proposal for your review.\n\nWe'd welcome the opportunity to discuss this further at your convenience. Please let us know if you have any questions.\n\nBest regards,\nJennifer Osei\nPartner Supply Co.",
+      rawHeaders:
+        "Return-Path: <bounce@partnersupplyco-demo.com>\n" +
+        "Received: from mail-eastus.outbound.protection.partnersupplyco-demo.com (unknown [40.107.220.34])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTPS id 9F2dC4b6\n" +
+        "\tfor <alex.johnson@fakecorp-demo.com>; Sat, 05 Sep 2026 13:20:03 +0000\n" +
+        "Message-ID: <f02b8a11@partnersupplyco-demo.com>\n" +
+        'From: "Jennifer Osei" <accounts@partnersupplyco-demo.com>\n' +
+        "To: alex.johnson@fakecorp-demo.com\n" +
+        "Subject: Q3 Partnership Proposal - Attached for Review\n" +
+        "Date: Sat, 05 Sep 2026 13:19:58 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: multipart/mixed; boundary="=_boundary_q3proposal"\n' +
+        "X-Originating-IP: [40.107.220.34]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=pass (sender IP is 40.107.220.34) smtp.mailfrom=accounts@partnersupplyco-demo.com;\n" +
+        "  dkim=pass header.d=partnersupplyco-demo.com;\n" +
+        "  dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=partnersupplyco-demo.com\n" +
+        "Received-SPF: pass (mx.fakecorp-demo.com: domain of partnersupplyco-demo.com\n" +
+        "  designates 40.107.220.34 as permitted sender)",
       attachmentName: "Q3_Partnership_Proposal.pdf",
       attachmentHash: BENIGN_SHA256,
     },
@@ -395,6 +494,464 @@ const tickets: TicketSeed[] = [
           "Scheduled antivirus scan completed with no threats detected on Alex Johnson's workstation",
         rawLogLine:
           "EndpointID=WKS-AJ-0392 EventID=AV_SCAN_COMPLETE Time=2026-09-05T14:15:00Z result=CLEAN files_scanned=48213 threats_found=0 engine=FakeDefender-v12.4 User=FAKECORP\\alex.johnson",
+      },
+    ],
+  },
+  {
+    ticketNumber: "TRQ-1006",
+    title: "Password Expiration Notice Reported by Finance Manager",
+    description:
+      "Meera Iyer (Finance) reported an automated password-expiration email as suspicious because of its urgent tone. Verify whether this is genuine IT communication before treating it as an incident.",
+    category: "PHISHING",
+    severity: "LOW",
+    reportedEmail: {
+      fromAddress: "it-support@fakecorp-demo.com",
+      toEmployeeEmail: "meera.iyer@fakecorp-demo.com",
+      subject: "Password Expiration Notice - Action Required Within 5 Days",
+      body: "Hello Meera,\n\nOur records show that your FakeCorp network password will expire in 5 days. To avoid any interruption to your account access, please update your password using the internal self-service portal below.\n\nhttps://portal.fakecorp-demo.com/password-reset\n\nIf you have any trouble accessing the portal, contact the IT Helpdesk at extension 4400.\n\nThank you,\nIT Support\nFakeCorp Industries",
+      rawHeaders:
+        "Return-Path: <it-support-bounce@fakecorp-demo.com>\n" +
+        "Received: from mail-internal-02.fakecorp-demo.com (mail-internal-02.fakecorp-demo.com [10.10.5.12])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTPS id 6C1eF9a3\n" +
+        "\tfor <meera.iyer@fakecorp-demo.com>; Sun, 06 Sep 2026 09:00:11 +0000\n" +
+        "Message-ID: <8f4a2c11@fakecorp-demo.com>\n" +
+        'From: "IT Support" <it-support@fakecorp-demo.com>\n' +
+        "To: meera.iyer@fakecorp-demo.com\n" +
+        "Subject: Password Expiration Notice - Action Required Within 5 Days\n" +
+        "Date: Sun, 06 Sep 2026 09:00:08 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: text/plain; charset="UTF-8"\n' +
+        "X-Originating-IP: [10.10.5.12]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=pass (sender IP is 10.10.5.12) smtp.mailfrom=it-support@fakecorp-demo.com;\n" +
+        "  dkim=pass header.d=fakecorp-demo.com;\n" +
+        "  dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=fakecorp-demo.com\n" +
+        "Received-SPF: pass (mx.fakecorp-demo.com: domain of fakecorp-demo.com\n" +
+        "  designates 10.10.5.12 as permitted sender)",
+      linkUrl: "https://portal.fakecorp-demo.com/password-reset",
+    },
+    logs: [
+      {
+        timestamp: "2026-09-06T09:00:11Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "meera.iyer@fakecorp-demo.com",
+        eventSummary:
+          "Automated password-expiration notice delivered from the real internal IT-support mailer (SPF/DKIM/DMARC all pass)",
+        rawLogLine:
+          '2026-09-06 09:00:11 UTC EMAIL_GATEWAY action=DELIVERED from=it-support@fakecorp-demo.com to=meera.iyer@fakecorp-demo.com subject="Password Expiration Notice - Action Required Within 5 Days" url=https://portal.fakecorp-demo.com/password-reset spf=PASS dkim=PASS dmarc=PASS spam_score=0.2/10 msg_id=<8f4a2c11@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-06T09:00:22Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "tom.bradley@fakecorp-demo.com",
+        eventSummary: "Same automated notice also delivered to Tom Bradley (IT)",
+        rawLogLine:
+          '2026-09-06 09:00:22 UTC EMAIL_GATEWAY action=DELIVERED from=it-support@fakecorp-demo.com to=tom.bradley@fakecorp-demo.com subject="Password Expiration Notice - Action Required Within 5 Days" url=https://portal.fakecorp-demo.com/password-reset spf=PASS dkim=PASS dmarc=PASS spam_score=0.2/10 msg_id=<8f4a2c11@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-06T09:00:31Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "angela.foster@fakecorp-demo.com",
+        eventSummary: "Same automated notice also delivered to Angela Foster (Executive)",
+        rawLogLine:
+          '2026-09-06 09:00:31 UTC EMAIL_GATEWAY action=DELIVERED from=it-support@fakecorp-demo.com to=angela.foster@fakecorp-demo.com subject="Password Expiration Notice - Action Required Within 5 Days" url=https://portal.fakecorp-demo.com/password-reset spf=PASS dkim=PASS dmarc=PASS spam_score=0.2/10 msg_id=<8f4a2c11@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-06T09:00:44Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "karan.mehta@fakecorp-demo.com",
+        eventSummary: "Same automated notice also delivered to Karan Mehta (Sales)",
+        rawLogLine:
+          '2026-09-06 09:00:44 UTC EMAIL_GATEWAY action=DELIVERED from=it-support@fakecorp-demo.com to=karan.mehta@fakecorp-demo.com subject="Password Expiration Notice - Action Required Within 5 Days" url=https://portal.fakecorp-demo.com/password-reset spf=PASS dkim=PASS dmarc=PASS spam_score=0.2/10 msg_id=<8f4a2c11@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-06T09:00:58Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "sandra.wilson@fakecorp-demo.com",
+        eventSummary: "Same automated notice also delivered to Sandra Wilson (HR)",
+        rawLogLine:
+          '2026-09-06 09:00:58 UTC EMAIL_GATEWAY action=DELIVERED from=it-support@fakecorp-demo.com to=sandra.wilson@fakecorp-demo.com subject="Password Expiration Notice - Action Required Within 5 Days" url=https://portal.fakecorp-demo.com/password-reset spf=PASS dkim=PASS dmarc=PASS spam_score=0.2/10 msg_id=<8f4a2c11@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-06T09:14:02Z",
+        sourceType: "NETWORK",
+        employeeEmail: "meera.iyer@fakecorp-demo.com",
+        eventSummary:
+          "Meera Iyer's workstation loaded the internal password-reset portal normally (200 OK, internal domain)",
+        rawLogLine:
+          '2026-09-06T09:14:02Z NETWORK_EVENT user=meera.iyer@fakecorp-demo.com src_ip=10.20.3.41 dest_url=https://portal.fakecorp-demo.com/password-reset action=ALLOWED category=INTERNAL_IT http_method=GET status=200 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
+      },
+      {
+        timestamp: "2026-09-06T09:15:10Z",
+        sourceType: "AUTHENTICATION",
+        employeeEmail: "meera.iyer@fakecorp-demo.com",
+        eventSummary:
+          "Meera Iyer completed a normal, self-initiated password change from her usual device and location",
+        rawLogLine:
+          '2026-09-06T09:15:10Z AUTH_EVENT event=PASSWORD_CHANGED user=meera.iyer@fakecorp-demo.com result=SUCCESS ip=10.20.3.41 geo="Austin, TX, US" device=Known-Windows-Edge mfa_status=APPROVED risk_level=LOW',
+      },
+    ],
+  },
+  {
+    ticketNumber: "TRQ-1007",
+    title: "Fake Document-Share Link Leads to Confirmed Credential Compromise",
+    description:
+      "Rachel Kim (IT) reported a \"document shared with you\" email with a link to review it. She's not sure whether she entered her password on the page that opened. Same campaign hit several other employees — establish who clicked, who entered credentials, and whether any account was actually compromised.",
+    category: "PHISHING",
+    severity: "CRITICAL",
+    reportedEmail: {
+      fromAddress: "notifications@fakecorp-docshare-online.com",
+      toEmployeeEmail: "rachel.kim@fakecorp-demo.com",
+      subject: "A document has been shared with you: Q4_Budget_Review.xlsx",
+      body: "Hi Rachel,\n\nA colleague has shared a document with you via SecureDocs Online.\n\nDocument: Q4_Budget_Review.xlsx\nShared by: Finance Team\n\nClick below to view the document. You may be asked to sign in with your company email to confirm access.\n\n[View Document]\n\nThis link is valid for 24 hours.\n\nSecureDocs Online",
+      rawHeaders:
+        "Return-Path: <bounce@fakecorp-docshare-online.com>\n" +
+        "Received: from mail.fakecorp-docshare-online.com (unknown [45.148.10.22])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTP id 3D8gH2j5\n" +
+        "\tfor <rachel.kim@fakecorp-demo.com>; Mon, 07 Sep 2026 10:05:14 +0000\n" +
+        "Message-ID: <e91b4f22@fakecorp-docshare-online.com>\n" +
+        'From: "SecureDocs Online" <notifications@fakecorp-docshare-online.com>\n' +
+        "To: rachel.kim@fakecorp-demo.com\n" +
+        "Subject: A document has been shared with you: Q4_Budget_Review.xlsx\n" +
+        "Date: Mon, 07 Sep 2026 10:05:11 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: text/html; charset="UTF-8"\n' +
+        "X-Originating-IP: [45.148.10.22]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=fail (sender IP is 45.148.10.22) smtp.mailfrom=notifications@fakecorp-docshare-online.com;\n" +
+        "  dkim=fail (no signature) header.d=none;\n" +
+        "  dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=fakecorp-docshare-online.com\n" +
+        "Received-SPF: fail (mx.fakecorp-demo.com: domain of fakecorp-docshare-online.com\n" +
+        "  does not designate 45.148.10.22 as permitted sender)",
+      linkUrl: "http://fakecorp-docshare-online.com/view?doc=8827",
+    },
+    logs: [
+      {
+        timestamp: "2026-09-07T10:05:14Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "rachel.kim@fakecorp-demo.com",
+        eventSummary:
+          "Fake document-share email delivered to Systems Administrator Rachel Kim from a lookalike domain",
+        rawLogLine:
+          '2026-09-07 10:05:14 UTC EMAIL_GATEWAY action=DELIVERED from=notifications@fakecorp-docshare-online.com to=rachel.kim@fakecorp-demo.com subject="A document has been shared with you: Q4_Budget_Review.xlsx" url=http://fakecorp-docshare-online.com/view?doc=8827 spf=FAIL dkim=FAIL dmarc=FAIL spam_score=6.5/10 msg_id=<e91b4f22@fakecorp-docshare-online.com>',
+      },
+      {
+        timestamp: "2026-09-07T10:05:29Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "james.patel@fakecorp-demo.com",
+        eventSummary: "Same campaign also delivered to James Patel (IT)",
+        rawLogLine:
+          '2026-09-07 10:05:29 UTC EMAIL_GATEWAY action=DELIVERED from=notifications@fakecorp-docshare-online.com to=james.patel@fakecorp-demo.com subject="A document has been shared with you: Q4_Budget_Review.xlsx" url=http://fakecorp-docshare-online.com/view?doc=8827 spf=FAIL dkim=FAIL dmarc=FAIL spam_score=6.5/10 msg_id=<e91b4f22@fakecorp-docshare-online.com>',
+      },
+      {
+        timestamp: "2026-09-07T10:05:41Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "daniel.wu@fakecorp-demo.com",
+        eventSummary: "Same campaign also delivered to Daniel Wu (Executive) — not clicked",
+        rawLogLine:
+          '2026-09-07 10:05:41 UTC EMAIL_GATEWAY action=DELIVERED from=notifications@fakecorp-docshare-online.com to=daniel.wu@fakecorp-demo.com subject="A document has been shared with you: Q4_Budget_Review.xlsx" url=http://fakecorp-docshare-online.com/view?doc=8827 spf=FAIL dkim=FAIL dmarc=FAIL spam_score=6.5/10 msg_id=<e91b4f22@fakecorp-docshare-online.com>',
+      },
+      {
+        timestamp: "2026-09-07T10:05:53Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "sophie.turner@fakecorp-demo.com",
+        eventSummary: "Same campaign also delivered to Sophie Turner (Sales) — not clicked",
+        rawLogLine:
+          '2026-09-07 10:05:53 UTC EMAIL_GATEWAY action=DELIVERED from=notifications@fakecorp-docshare-online.com to=sophie.turner@fakecorp-demo.com subject="A document has been shared with you: Q4_Budget_Review.xlsx" url=http://fakecorp-docshare-online.com/view?doc=8827 spf=FAIL dkim=FAIL dmarc=FAIL spam_score=6.5/10 msg_id=<e91b4f22@fakecorp-docshare-online.com>',
+      },
+      {
+        timestamp: "2026-09-07T10:06:05Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "linda.martinez@fakecorp-demo.com",
+        eventSummary: "Same campaign also delivered to Linda Martinez (HR)",
+        rawLogLine:
+          '2026-09-07 10:06:05 UTC EMAIL_GATEWAY action=DELIVERED from=notifications@fakecorp-docshare-online.com to=linda.martinez@fakecorp-demo.com subject="A document has been shared with you: Q4_Budget_Review.xlsx" url=http://fakecorp-docshare-online.com/view?doc=8827 spf=FAIL dkim=FAIL dmarc=FAIL spam_score=6.5/10 msg_id=<e91b4f22@fakecorp-docshare-online.com>',
+      },
+      {
+        timestamp: "2026-09-07T10:11:20Z",
+        sourceType: "NETWORK",
+        employeeEmail: "rachel.kim@fakecorp-demo.com",
+        eventSummary:
+          "Rachel Kim's workstation loaded the fake login page while the phishing site was still live (200 OK)",
+        rawLogLine:
+          '2026-09-07T10:11:20Z NETWORK_EVENT user=rachel.kim@fakecorp-demo.com src_ip=10.20.6.18 dest_url=http://fakecorp-docshare-online.com/view?doc=8827 action=ALLOWED category=UNCATEGORIZED http_method=GET status=200 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
+      },
+      {
+        timestamp: "2026-09-07T10:12:40Z",
+        sourceType: "AUTHENTICATION",
+        employeeEmail: "rachel.kim@fakecorp-demo.com",
+        eventSummary:
+          "Successful sign-in for Rachel Kim from an unrecognized external IP minutes after she loaded the fake login page — no MFA challenge",
+        rawLogLine:
+          '2026-09-07T10:12:40Z AUTH_EVENT user=rachel.kim@fakecorp-demo.com result=SUCCESS auth_method=PASSWORD ip=45.148.10.22 geo="Amsterdam, Netherlands" device=Unknown-Linux-Chrome mfa_status=NOT_ENROLLED risk_level=CRITICAL session_id=6f1c8e2a90',
+      },
+      {
+        timestamp: "2026-09-07T10:19:07Z",
+        sourceType: "NETWORK",
+        employeeEmail: "james.patel@fakecorp-demo.com",
+        eventSummary:
+          "James Patel's workstation also loaded the fake login page (200 OK) but he closed the tab without entering anything",
+        rawLogLine:
+          '2026-09-07T10:19:07Z NETWORK_EVENT user=james.patel@fakecorp-demo.com src_ip=10.20.4.62 dest_url=http://fakecorp-docshare-online.com/view?doc=8827 action=ALLOWED category=UNCATEGORIZED http_method=GET status=200 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
+      },
+      {
+        timestamp: "2026-09-07T14:02:51Z",
+        sourceType: "NETWORK",
+        employeeEmail: "linda.martinez@fakecorp-demo.com",
+        eventSummary:
+          "Linda Martinez clicked the same link hours later, after the phishing site had already been taken down (404)",
+        rawLogLine:
+          '2026-09-07T14:02:51Z NETWORK_EVENT user=linda.martinez@fakecorp-demo.com src_ip=10.20.7.09 dest_url=http://fakecorp-docshare-online.com/view?doc=8827 action=ALLOWED category=UNCATEGORIZED http_method=GET status=404 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
+      },
+    ],
+  },
+  {
+    ticketNumber: "TRQ-1008",
+    title: "Unfamiliar Vendor Newsletter Reported by CFO",
+    description:
+      "Angela Foster (CFO) reported a product-update newsletter from a budgeting tool the company subscribes to, because she didn't personally recognize the sender. Confirm whether this is a legitimate vendor communication.",
+    category: "PHISHING",
+    severity: "LOW",
+    reportedEmail: {
+      fromAddress: "newsletter@realbudgetsoft-demo.com",
+      toEmployeeEmail: "angela.foster@fakecorp-demo.com",
+      subject: "New Features in Your March Release: Automated Expense Reports",
+      body: "Hi Angela,\n\nWe've just shipped a new feature we think your team will love: fully automated expense report generation, available now on your plan.\n\nRead the full release notes on our blog to see what's new and how to enable it for your workspace.\n\n[Read More]\n\nAs always, thank you for being a RealBudgetSoft customer.\n\nThe RealBudgetSoft Team\n\nYou're receiving this because you're subscribed to product updates. Unsubscribe anytime from your account settings.",
+      rawHeaders:
+        "Return-Path: <bounce@realbudgetsoft-demo.com>\n" +
+        "Received: from mail-outbound-3.realbudgetsoft-demo.com (mail-outbound-3.realbudgetsoft-demo.com [52.14.22.8])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTPS id 7A2eD8f4\n" +
+        "\tfor <angela.foster@fakecorp-demo.com>; Mon, 07 Sep 2026 16:30:02 +0000\n" +
+        "Message-ID: <d02f7a19@realbudgetsoft-demo.com>\n" +
+        'From: "The RealBudgetSoft Team" <newsletter@realbudgetsoft-demo.com>\n' +
+        "To: angela.foster@fakecorp-demo.com\n" +
+        "Subject: New Features in Your March Release: Automated Expense Reports\n" +
+        "Date: Mon, 07 Sep 2026 16:29:58 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: text/html; charset="UTF-8"\n' +
+        "List-Unsubscribe: <https://realbudgetsoft-demo.com/unsubscribe?id=9182>\n" +
+        "X-Originating-IP: [52.14.22.8]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=pass (sender IP is 52.14.22.8) smtp.mailfrom=newsletter@realbudgetsoft-demo.com;\n" +
+        "  dkim=pass header.d=realbudgetsoft-demo.com;\n" +
+        "  dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=realbudgetsoft-demo.com\n" +
+        "Received-SPF: pass (mx.fakecorp-demo.com: domain of realbudgetsoft-demo.com\n" +
+        "  designates 52.14.22.8 as permitted sender)",
+      linkUrl: "https://realbudgetsoft-demo.com/blog/march-release",
+    },
+    logs: [
+      {
+        timestamp: "2026-09-07T16:30:02Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "angela.foster@fakecorp-demo.com",
+        eventSummary:
+          "Product newsletter from the company's actual budgeting vendor delivered to CFO Angela Foster (SPF/DKIM/DMARC all pass)",
+        rawLogLine:
+          '2026-09-07 16:30:02 UTC EMAIL_GATEWAY action=DELIVERED from=newsletter@realbudgetsoft-demo.com to=angela.foster@fakecorp-demo.com subject="New Features in Your March Release: Automated Expense Reports" url=https://realbudgetsoft-demo.com/blog/march-release spf=PASS dkim=PASS dmarc=PASS spam_score=0.6/10 msg_id=<d02f7a19@realbudgetsoft-demo.com>',
+      },
+      {
+        timestamp: "2026-09-07T16:30:15Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "michael.ross@fakecorp-demo.com",
+        eventSummary: "Same newsletter also delivered to CEO Michael Ross (also subscribed)",
+        rawLogLine:
+          '2026-09-07 16:30:15 UTC EMAIL_GATEWAY action=DELIVERED from=newsletter@realbudgetsoft-demo.com to=michael.ross@fakecorp-demo.com subject="New Features in Your March Release: Automated Expense Reports" url=https://realbudgetsoft-demo.com/blog/march-release spf=PASS dkim=PASS dmarc=PASS spam_score=0.6/10 msg_id=<d02f7a19@realbudgetsoft-demo.com>',
+      },
+      {
+        timestamp: "2026-09-07T16:41:33Z",
+        sourceType: "NETWORK",
+        employeeEmail: "angela.foster@fakecorp-demo.com",
+        eventSummary:
+          "Angela Foster's workstation loaded the vendor's blog post normally (200 OK, legitimate vendor domain)",
+        rawLogLine:
+          '2026-09-07T16:41:33Z NETWORK_EVENT user=angela.foster@fakecorp-demo.com src_ip=10.20.2.05 dest_url=https://realbudgetsoft-demo.com/blog/march-release action=ALLOWED category=BUSINESS_SOFTWARE http_method=GET status=200 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
+      },
+    ],
+  },
+  {
+    ticketNumber: "TRQ-1009",
+    title: "Fake E-Signature Request Leads to Malware Execution",
+    description:
+      "Karan Mehta (Sales) reported an email asking him to review and sign a contract, either via a link or an attached preview copy. He downloaded the attachment after the link looked wrong. Same campaign hit several other employees — figure out who interacted with the link, who opened the attachment, and whether the link still works.",
+    category: "PHISHING",
+    severity: "CRITICAL",
+    reportedEmail: {
+      fromAddress: "esign-notify@fakecorp-esignature-verify.com",
+      toEmployeeEmail: "karan.mehta@fakecorp-demo.com",
+      subject: "Action Required: Please Review and Sign Contract #77452",
+      body: "Hello,\n\nYou have a document waiting for your electronic signature.\n\nContract #77452 — Vendor Services Agreement\n\nClick below to review and sign online, or open the attached preview copy if you'd prefer to review it offline first.\n\n[Review & Sign Document]\n\nThis request will expire in 72 hours.\n\nRegards,\nDocument Services",
+      rawHeaders:
+        "Return-Path: <bounce@fakecorp-esignature-verify.com>\n" +
+        "Received: from mail.fakecorp-esignature-verify.com (unknown [185.220.102.15])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTP id 5F9hJ3k7\n" +
+        "\tfor <karan.mehta@fakecorp-demo.com>; Tue, 08 Sep 2026 11:20:04 +0000\n" +
+        "Message-ID: <2b7d9e44@fakecorp-esignature-verify.com>\n" +
+        'From: "Document Services" <esign-notify@fakecorp-esignature-verify.com>\n' +
+        "To: karan.mehta@fakecorp-demo.com\n" +
+        "Subject: Action Required: Please Review and Sign Contract #77452\n" +
+        "Date: Tue, 08 Sep 2026 11:20:01 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: multipart/mixed; boundary="=_boundary_contract77452"\n' +
+        "X-Originating-IP: [185.220.102.15]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=fail (sender IP is 185.220.102.15) smtp.mailfrom=esign-notify@fakecorp-esignature-verify.com;\n" +
+        "  dkim=fail (no signature) header.d=none;\n" +
+        "  dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=fakecorp-esignature-verify.com\n" +
+        "Received-SPF: fail (mx.fakecorp-demo.com: domain of fakecorp-esignature-verify.com\n" +
+        "  does not designate 185.220.102.15 as permitted sender)",
+      linkUrl: "http://fakecorp-esignature-verify.com/sign/77452",
+      attachmentName: "Contract_77452_Preview.pdf",
+      attachmentHash: ESIGN_MALWARE_SHA256,
+    },
+    logs: [
+      {
+        timestamp: "2026-09-08T11:20:04Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "karan.mehta@fakecorp-demo.com",
+        eventSummary:
+          "Fake e-signature request with both a link and an attachment delivered to Karan Mehta (Sales)",
+        rawLogLine: `2026-09-08 11:20:04 UTC EMAIL_GATEWAY action=DELIVERED from=esign-notify@fakecorp-esignature-verify.com to=karan.mehta@fakecorp-demo.com subject="Action Required: Please Review and Sign Contract #77452" url=http://fakecorp-esignature-verify.com/sign/77452 attachment="Contract_77452_Preview.pdf" attachment_hash=${ESIGN_MALWARE_SHA256} spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.1/10 msg_id=<2b7d9e44@fakecorp-esignature-verify.com>`,
+      },
+      {
+        timestamp: "2026-09-08T11:20:19Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "alex.johnson@fakecorp-demo.com",
+        eventSummary: "Same campaign also delivered to Alex Johnson (Sales)",
+        rawLogLine: `2026-09-08 11:20:19 UTC EMAIL_GATEWAY action=DELIVERED from=esign-notify@fakecorp-esignature-verify.com to=alex.johnson@fakecorp-demo.com subject="Action Required: Please Review and Sign Contract #77452" url=http://fakecorp-esignature-verify.com/sign/77452 attachment="Contract_77452_Preview.pdf" attachment_hash=${ESIGN_MALWARE_SHA256} spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.1/10 msg_id=<2b7d9e44@fakecorp-esignature-verify.com>`,
+      },
+      {
+        timestamp: "2026-09-08T11:20:33Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "priya.nair@fakecorp-demo.com",
+        eventSummary: "Same campaign also delivered to Priya Nair (Finance) — no interaction",
+        rawLogLine: `2026-09-08 11:20:33 UTC EMAIL_GATEWAY action=DELIVERED from=esign-notify@fakecorp-esignature-verify.com to=priya.nair@fakecorp-demo.com subject="Action Required: Please Review and Sign Contract #77452" url=http://fakecorp-esignature-verify.com/sign/77452 attachment="Contract_77452_Preview.pdf" attachment_hash=${ESIGN_MALWARE_SHA256} spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.1/10 msg_id=<2b7d9e44@fakecorp-esignature-verify.com>`,
+      },
+      {
+        timestamp: "2026-09-08T11:20:47Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "sandra.wilson@fakecorp-demo.com",
+        eventSummary: "Same campaign also delivered to Sandra Wilson (HR) — no interaction",
+        rawLogLine: `2026-09-08 11:20:47 UTC EMAIL_GATEWAY action=DELIVERED from=esign-notify@fakecorp-esignature-verify.com to=sandra.wilson@fakecorp-demo.com subject="Action Required: Please Review and Sign Contract #77452" url=http://fakecorp-esignature-verify.com/sign/77452 attachment="Contract_77452_Preview.pdf" attachment_hash=${ESIGN_MALWARE_SHA256} spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.1/10 msg_id=<2b7d9e44@fakecorp-esignature-verify.com>`,
+      },
+      {
+        timestamp: "2026-09-08T11:21:02Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "tom.bradley@fakecorp-demo.com",
+        eventSummary: "Same campaign also delivered to Tom Bradley (IT) — no interaction",
+        rawLogLine: `2026-09-08 11:21:02 UTC EMAIL_GATEWAY action=DELIVERED from=esign-notify@fakecorp-esignature-verify.com to=tom.bradley@fakecorp-demo.com subject="Action Required: Please Review and Sign Contract #77452" url=http://fakecorp-esignature-verify.com/sign/77452 attachment="Contract_77452_Preview.pdf" attachment_hash=${ESIGN_MALWARE_SHA256} spf=FAIL dkim=FAIL dmarc=FAIL spam_score=7.1/10 msg_id=<2b7d9e44@fakecorp-esignature-verify.com>`,
+      },
+      {
+        timestamp: "2026-09-08T11:26:40Z",
+        sourceType: "NETWORK",
+        employeeEmail: "karan.mehta@fakecorp-demo.com",
+        eventSummary:
+          "Karan Mehta's workstation loaded the fake signing page while it was still live (200 OK); he did not enter credentials",
+        rawLogLine:
+          '2026-09-08T11:26:40Z NETWORK_EVENT user=karan.mehta@fakecorp-demo.com src_ip=10.20.4.71 dest_url=http://fakecorp-esignature-verify.com/sign/77452 action=ALLOWED category=UNCATEGORIZED http_method=GET status=200 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
+      },
+      {
+        timestamp: "2026-09-08T11:29:55Z",
+        sourceType: "ENDPOINT",
+        employeeEmail: "karan.mehta@fakecorp-demo.com",
+        eventSummary:
+          "Karan Mehta instead opened the attached \"preview\" PDF, which spawned a script host process",
+        rawLogLine: `EndpointID=WKS-KM-0663 EventID=1(ProcessCreate) Time=2026-09-08T11:29:55Z ParentImage=C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe Image=C:\\Windows\\System32\\wscript.exe CommandLine="wscript.exe //B //NoLogo C:\\Users\\karan.mehta\\AppData\\Local\\Temp\\contract_open.vbs" sha256=${ESIGN_MALWARE_SHA256} User=FAKECORP\\karan.mehta`,
+      },
+      {
+        timestamp: "2026-09-08T11:30:03Z",
+        sourceType: "ENDPOINT",
+        employeeEmail: "karan.mehta@fakecorp-demo.com",
+        eventSummary:
+          "The spawned script process beaconed out to a known-bad external IP shortly after",
+        rawLogLine:
+          "EndpointID=WKS-KM-0663 EventID=3(NetworkConnect) Time=2026-09-08T11:30:03Z Image=C:\\Windows\\System32\\wscript.exe DestinationIp=185.220.102.31 DestinationPort=443 Protocol=TCP Direction=OUTBOUND ThreatIntel=MATCH(C2_INFRASTRUCTURE) User=FAKECORP\\karan.mehta",
+      },
+      {
+        timestamp: "2026-09-08T15:47:18Z",
+        sourceType: "NETWORK",
+        employeeEmail: "alex.johnson@fakecorp-demo.com",
+        eventSummary:
+          "Alex Johnson clicked the same link hours later, after the signing page had already been taken down (404)",
+        rawLogLine:
+          '2026-09-08T15:47:18Z NETWORK_EVENT user=alex.johnson@fakecorp-demo.com src_ip=10.20.4.88 dest_url=http://fakecorp-esignature-verify.com/sign/77452 action=ALLOWED category=UNCATEGORIZED http_method=GET status=404 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
+      },
+    ],
+  },
+  {
+    ticketNumber: "TRQ-1010",
+    title: "Automated VPN Certificate Renewal Notice Reported by Recruiter",
+    description:
+      "David Okafor (HR) reported an automated VPN certificate renewal notice as suspicious because of its terse, robotic tone. Confirm whether this is genuine automated IT communication before treating it as an incident.",
+    category: "PHISHING",
+    severity: "LOW",
+    reportedEmail: {
+      fromAddress: "vpn-automation@fakecorp-demo.com",
+      toEmployeeEmail: "david.okafor@fakecorp-demo.com",
+      subject: "[Automated] Your VPN Certificate Expires in 7 Days - Renewal Required",
+      body: "VPN CERTIFICATE RENEWAL NOTICE\n\nUser: david.okafor@fakecorp-demo.com\nCertificate expires: 7 days\nAction required: Renew via the self-service portal below.\n\nhttps://vpn.fakecorp-demo.com/renew\n\nThis is an automated message. Do not reply to this email.\n\n- FakeCorp IT Operations",
+      rawHeaders:
+        "Return-Path: <vpn-automation-bounce@fakecorp-demo.com>\n" +
+        "Received: from mail-internal-04.fakecorp-demo.com (mail-internal-04.fakecorp-demo.com [10.10.5.40])\n" +
+        "\tby mx.fakecorp-demo.com (Postfix) with ESMTPS id 4B6cK1e9\n" +
+        "\tfor <david.okafor@fakecorp-demo.com>; Wed, 09 Sep 2026 06:00:03 +0000\n" +
+        "Message-ID: <a01c8f36@fakecorp-demo.com>\n" +
+        'From: "FakeCorp IT Operations" <vpn-automation@fakecorp-demo.com>\n' +
+        "To: david.okafor@fakecorp-demo.com\n" +
+        "Subject: [Automated] Your VPN Certificate Expires in 7 Days - Renewal Required\n" +
+        "Date: Wed, 09 Sep 2026 06:00:00 +0000\n" +
+        "MIME-Version: 1.0\n" +
+        'Content-Type: text/plain; charset="UTF-8"\n' +
+        "X-Originating-IP: [10.10.5.40]\n" +
+        "Authentication-Results: mx.fakecorp-demo.com;\n" +
+        "  spf=pass (sender IP is 10.10.5.40) smtp.mailfrom=vpn-automation@fakecorp-demo.com;\n" +
+        "  dkim=pass header.d=fakecorp-demo.com;\n" +
+        "  dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=fakecorp-demo.com\n" +
+        "Received-SPF: pass (mx.fakecorp-demo.com: domain of fakecorp-demo.com\n" +
+        "  designates 10.10.5.40 as permitted sender)",
+      linkUrl: "https://vpn.fakecorp-demo.com/renew",
+    },
+    logs: [
+      {
+        timestamp: "2026-09-09T06:00:03Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "david.okafor@fakecorp-demo.com",
+        eventSummary:
+          "Automated VPN certificate renewal notice delivered from the real internal automation mailer (SPF/DKIM/DMARC all pass)",
+        rawLogLine:
+          '2026-09-09 06:00:03 UTC EMAIL_GATEWAY action=DELIVERED from=vpn-automation@fakecorp-demo.com to=david.okafor@fakecorp-demo.com subject="[Automated] Your VPN Certificate Expires in 7 Days - Renewal Required" url=https://vpn.fakecorp-demo.com/renew spf=PASS dkim=PASS dmarc=PASS spam_score=0.3/10 msg_id=<a01c8f36@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-09T06:00:14Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "robert.chen@fakecorp-demo.com",
+        eventSummary: "Same automated notice also delivered to Robert Chen (Finance)",
+        rawLogLine:
+          '2026-09-09 06:00:14 UTC EMAIL_GATEWAY action=DELIVERED from=vpn-automation@fakecorp-demo.com to=robert.chen@fakecorp-demo.com subject="[Automated] Your VPN Certificate Expires in 7 Days - Renewal Required" url=https://vpn.fakecorp-demo.com/renew spf=PASS dkim=PASS dmarc=PASS spam_score=0.3/10 msg_id=<a01c8f36@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-09T06:00:26Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "james.patel@fakecorp-demo.com",
+        eventSummary: "Same automated notice also delivered to James Patel (IT)",
+        rawLogLine:
+          '2026-09-09 06:00:26 UTC EMAIL_GATEWAY action=DELIVERED from=vpn-automation@fakecorp-demo.com to=james.patel@fakecorp-demo.com subject="[Automated] Your VPN Certificate Expires in 7 Days - Renewal Required" url=https://vpn.fakecorp-demo.com/renew spf=PASS dkim=PASS dmarc=PASS spam_score=0.3/10 msg_id=<a01c8f36@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-09T06:00:39Z",
+        sourceType: "EMAIL_GATEWAY",
+        employeeEmail: "linda.martinez@fakecorp-demo.com",
+        eventSummary: "Same automated notice also delivered to Linda Martinez (HR)",
+        rawLogLine:
+          '2026-09-09 06:00:39 UTC EMAIL_GATEWAY action=DELIVERED from=vpn-automation@fakecorp-demo.com to=linda.martinez@fakecorp-demo.com subject="[Automated] Your VPN Certificate Expires in 7 Days - Renewal Required" url=https://vpn.fakecorp-demo.com/renew spf=PASS dkim=PASS dmarc=PASS spam_score=0.3/10 msg_id=<a01c8f36@fakecorp-demo.com>',
+      },
+      {
+        timestamp: "2026-09-09T06:22:51Z",
+        sourceType: "NETWORK",
+        employeeEmail: "david.okafor@fakecorp-demo.com",
+        eventSummary:
+          "David Okafor's workstation loaded the internal VPN renewal portal normally (200 OK, internal domain)",
+        rawLogLine:
+          '2026-09-09T06:22:51Z NETWORK_EVENT user=david.okafor@fakecorp-demo.com src_ip=10.20.5.14 dest_url=https://vpn.fakecorp-demo.com/renew action=ALLOWED category=INTERNAL_IT http_method=GET status=200 user_agent="Mozilla/5.0 (Windows NT 10.0)"',
       },
     ],
   },
@@ -444,6 +1001,7 @@ export async function seedLabEnvironment(prisma: PrismaClient) {
         toEmployeeId,
         subject: t.reportedEmail.subject,
         body: t.reportedEmail.body,
+        rawHeaders: t.reportedEmail.rawHeaders,
         attachmentName: t.reportedEmail.attachmentName,
         attachmentHash: t.reportedEmail.attachmentHash,
         linkUrl: t.reportedEmail.linkUrl,
@@ -454,6 +1012,7 @@ export async function seedLabEnvironment(prisma: PrismaClient) {
         toEmployeeId,
         subject: t.reportedEmail.subject,
         body: t.reportedEmail.body,
+        rawHeaders: t.reportedEmail.rawHeaders,
         attachmentName: t.reportedEmail.attachmentName,
         attachmentHash: t.reportedEmail.attachmentHash,
         linkUrl: t.reportedEmail.linkUrl,
