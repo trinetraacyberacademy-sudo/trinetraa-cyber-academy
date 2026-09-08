@@ -74,8 +74,8 @@ export function RegistrationCard({
               You&apos;re confirmed!
             </p>
             <p className="mt-2 leading-6">
-              Your training environment is being prepared — access details for Splunk,
-              CrowdStrike Falcon, and the rest of the toolset are coming soon.
+              Your lab environment is ready — scroll down to open TrinetraTicket and
+              TrinetraSIEM and start working real-style cases.
             </p>
           </div>
         </div>

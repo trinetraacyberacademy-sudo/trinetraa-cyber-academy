@@ -2,6 +2,7 @@ import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { PrismaClient, Role } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { seedLabEnvironment } from "./seed-lab";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -81,6 +82,8 @@ async function main() {
   });
 
   console.log(`Courses ready: ${socProgram.title}, ${workshop.title}`);
+
+  await seedLabEnvironment(prisma);
 }
 
 main()

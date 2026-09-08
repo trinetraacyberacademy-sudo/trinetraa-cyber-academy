@@ -28,6 +28,35 @@ enum EnquiryStatus {
   CLOSED
 }
 
+enum TicketCategory {
+  PHISHING
+  MALWARE
+  ENDPOINT
+  IDENTITY
+  NETWORK
+}
+
+enum TicketSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  ESCALATED
+}
+
+enum LogSourceType {
+  EMAIL_GATEWAY
+  ENDPOINT
+  AUTHENTICATION
+  NETWORK
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -38,6 +67,77 @@ model User {
   createdAt    DateTime @default(now())
 
   registrations Registration[]
+  tickets       Ticket[]
+}
+
+/// Fictional company used as the shared backdrop for lab exercises — every
+/// employee, email, and log line across the lab tools is fabricated.
+model FakeEmployee {
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  department String
+  jobTitle   String
+  createdAt  DateTime @default(now())
+
+  logEvents      LogEvent[]
+  reportedEmails ReportedEmail[]
+}
+
+/// TrinetraTicket — the case-management lab tool.
+model Ticket {
+  id                 String         @id @default(cuid())
+  ticketNumber       String         @unique
+  title              String
+  description        String
+  category           TicketCategory
+  severity           TicketSeverity
+  status             TicketStatus   @default(OPEN)
+  assignedToUserId   String?
+  assignedToUser     User?          @relation(fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  investigationNotes String?
+  resolution         String?
+  resolutionNotes    String?
+  createdAt          DateTime       @default(now())
+  resolvedAt         DateTime?
+
+  reportedEmail ReportedEmail?
+  logEvents     LogEvent[]
+
+  @@index([assignedToUserId])
+  @@index([status])
+}
+
+/// The simulated phishing report a student reviews inside a PHISHING ticket.
+model ReportedEmail {
+  id             String        @id @default(cuid())
+  ticketId       String        @unique
+  ticket         Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  fromAddress    String
+  toEmployeeId   String?
+  toEmployee     FakeEmployee? @relation(fields: [toEmployeeId], references: [id], onDelete: SetNull)
+  subject        String
+  body           String
+  attachmentName String?
+  linkUrl        String?
+}
+
+/// TrinetraSIEM — searchable log events. `relatedTicketId` is what lets a
+/// student correlate a ticket's story across the two lab tools.
+model LogEvent {
+  id              String        @id @default(cuid())
+  timestamp       DateTime
+  sourceType      LogSourceType
+  employeeId      String?
+  employee        FakeEmployee? @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  eventSummary    String
+  rawLogLine      String
+  relatedTicketId String?
+  relatedTicket   Ticket?       @relation(fields: [relatedTicketId], references: [id], onDelete: SetNull)
+
+  @@index([relatedTicketId])
+  @@index([sourceType])
+  @@index([employeeId])
 }
 
 model Course {

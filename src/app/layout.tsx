@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { HydrationSignal } from "@/components/ui/HydrationSignal";
 import { auth } from "@/lib/auth";
 import "./globals.css";
@@ -51,9 +52,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <style>{`[style*="opacity:0"] { opacity: 1 !important; transform: none !important; }`}</style>
         </noscript>
         <HydrationSignal />
-        <Navbar session={session} />
+        <SiteChrome>
+          <Navbar session={session} />
+        </SiteChrome>
         <main className="flex-1">{children}</main>
-        <Footer />
+        <SiteChrome>
+          <Footer />
+        </SiteChrome>
       </body>
     </html>
   );

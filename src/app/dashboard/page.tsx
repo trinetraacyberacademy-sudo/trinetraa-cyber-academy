@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { CheckCircle2, Mail, Phone, User as UserIcon } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle2, Mail, Phone, Search, Ticket, User as UserIcon } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { RegistrationCard } from "@/components/dashboard/RegistrationCard";
@@ -36,6 +37,8 @@ export default async function DashboardPage({
   });
 
   if (!user) redirect("/login");
+
+  const hasLabAccess = user.registrations.some((r) => r.status === "PAID");
 
   return (
     <section className="bg-slate-50 py-32">
@@ -86,6 +89,52 @@ export default async function DashboardPage({
             ))
           )}
         </div>
+
+        {hasLabAccess && (
+          <Reveal delay={0.15}>
+            <div className="mt-8">
+              <h2 className="font-display text-base font-semibold text-slate-900">
+                Your Lab Environment
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Hands-on tools for the training program — investigate real-style tickets and
+                correlate logs like a working SOC analyst.
+              </p>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <Link
+                  href="/dashboard/tickets"
+                  className="group rounded-2xl border border-ink-800 bg-ink-950 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-signal-500/50 hover:shadow-lg"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-signal-500/30 bg-signal-500/10 text-signal-400">
+                    <Ticket className="h-5 w-5" />
+                  </div>
+                  <p className="mt-4 font-display text-base font-semibold text-white">
+                    TrinetraTicket
+                  </p>
+                  <p className="mt-1.5 text-sm leading-6 text-slate-400">
+                    Investigate assigned case tickets, review reported phishing emails, and
+                    document your findings.
+                  </p>
+                </Link>
+                <Link
+                  href="/dashboard/siem"
+                  className="group rounded-2xl border border-ink-800 bg-ink-950 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-signal-500/50 hover:shadow-lg"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-signal-500/30 bg-signal-500/10 text-signal-400">
+                    <Search className="h-5 w-5" />
+                  </div>
+                  <p className="mt-4 font-display text-base font-semibold text-white">
+                    TrinetraSIEM
+                  </p>
+                  <p className="mt-1.5 text-sm leading-6 text-slate-400">
+                    Search and correlate log events across email, endpoint, and authentication
+                    sources.
+                  </p>
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+        )}
 
         <Reveal delay={0.2}>
           <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
