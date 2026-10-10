@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat";
 import { HydrationSignal } from "@/components/ui/HydrationSignal";
 import { auth } from "@/lib/auth";
 import "./globals.css";
@@ -58,6 +59,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
         <SiteChrome>
           <Footer />
+          <WhatsAppFloat />
         </SiteChrome>
       </body>
     </html>
