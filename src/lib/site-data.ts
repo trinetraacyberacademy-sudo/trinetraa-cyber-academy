@@ -21,46 +21,6 @@ export const siteConfig = {
   priceOffer: 5999,
 };
 
-export const workshop = {
-  eyebrow: "Limited-Time Workshop",
-  title: "3-Day Live SOC Workshop",
-  tagline: "A fast, hands-on preview of real SOC analyst work — before you commit to the full program.",
-  dateRange: "4 – 6 September 2026",
-  format: "2 hours/day · Live Online",
-  price: 499,
-  includesCertificate: true,
-  seatsNote: "Seats are limited to keep sessions interactive.",
-  includes: [
-    "3 live instructor-led online sessions",
-    "Live demo of real alert triage inside SOC tools",
-    "Certificate of Participation",
-    "Live Q&A with working SOC mentors",
-  ],
-  days: [
-    {
-      day: "Day 1",
-      date: "4 Sept",
-      title: "Cybersecurity Roadmap & Fundamentals",
-      description:
-        "Explore cybersecurity as a career, the SOC analyst path in particular, and where the field stands today — setting the stage for the two hands-on days ahead.",
-    },
-    {
-      day: "Day 2",
-      date: "5 Sept",
-      title: "Core Attack Concepts",
-      description:
-        "Get inside the mind of an attacker: how phishing campaigns work, the major malware types and how they behave, and the other threat concepts analysts face every shift.",
-    },
-    {
-      day: "Day 3",
-      date: "6 Sept",
-      title: "Live Alert Handling Demo",
-      description:
-        "Watch a real-style alert get triaged from start to finish — see exactly how a phishing alert and other detections are investigated and handled inside real SOC tools.",
-    },
-  ],
-};
-
 export const navLinks = [
   { label: "Home", href: "/" },
   { label: "Courses", href: "/courses" },
@@ -251,26 +211,6 @@ export const courses = [
     audience:
       "For career switchers and freshers who want a real, hands-on SOC analyst skillset — not just theory.",
     href: "/courses/soc-analyst-program",
-  },
-  {
-    slug: "workshop",
-    type: "workshop" as const,
-    title: "3-Day Live SOC Workshop",
-    tagline: "A fast, hands-on preview of real SOC analyst work.",
-    format: "3 Days · 2 hrs/day · Live Online",
-    price: 499,
-    originalPrice: null,
-    badgeText: "4 – 6 Sept 2026 · Certificate Included",
-    badgeTone: "flare" as const,
-    highlights: [
-      "3 live instructor-led sessions, 2 hours/day",
-      "Live demo of real alert triage inside SOC tools",
-      "Certificate of Participation",
-      "Small batches, highly interactive",
-    ],
-    audience:
-      "For absolute beginners who want a low-risk, hands-on taste of SOC work before committing further.",
-    href: "#workshop",
   },
 ];
 

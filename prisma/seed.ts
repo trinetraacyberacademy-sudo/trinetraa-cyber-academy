@@ -58,30 +58,7 @@ async function main() {
     },
   });
 
-  const workshop = await prisma.course.upsert({
-    where: { slug: "workshop" },
-    update: {
-      title: "3-Day Live SOC Workshop",
-      price: 499,
-      originalPrice: null,
-      format: "3 Days · 2 hrs/day · Live Online",
-      description:
-        "A fast, hands-on 3-day preview of real SOC analyst work — live sessions, a real alert-triage demo inside SOC tools, and a certificate of participation.",
-      isActive: true,
-    },
-    create: {
-      slug: "workshop",
-      title: "3-Day Live SOC Workshop",
-      price: 499,
-      originalPrice: null,
-      format: "3 Days · 2 hrs/day · Live Online",
-      description:
-        "A fast, hands-on 3-day preview of real SOC analyst work — live sessions, a real alert-triage demo inside SOC tools, and a certificate of participation.",
-      isActive: true,
-    },
-  });
-
-  console.log(`Courses ready: ${socProgram.title}, ${workshop.title}`);
+  console.log(`Course ready: ${socProgram.title}`);
 
   await seedLabEnvironment(prisma);
 }

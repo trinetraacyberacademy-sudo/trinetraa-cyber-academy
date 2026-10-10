@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
-import { CourseFilterTabs } from "@/components/courses/CourseFilterTabs";
-import { WorkshopSection } from "@/components/home/WorkshopSection";
+import { CourseCard } from "@/components/courses/CourseCard";
+import { courses } from "@/lib/site-data";
 
 export const metadata: Metadata = {
   title: "Our Programs | Trinetraa Cyber Academy",
   description:
-    "Explore Trinetraa Cyber Academy's SOC training programs — from the 6-month live SOC Analyst Training Program to the 3-day live SOC workshop.",
+    "Explore Trinetraa Cyber Academy's 6-month live SOC Analyst Training Program — hands-on access to real SOC tools and a real incident ticket queue.",
 };
 
 export default function CoursesPage() {
@@ -27,8 +25,8 @@ export default function CoursesPage() {
           </Reveal>
           <Reveal delay={0.08}>
             <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-              Whether you want a quick, hands-on taste of SOC work or a full
-              hands-on training program, start here.
+              A live, hands-on SOC Analyst training program built around real
+              tools and a real incident ticket queue.
             </p>
           </Reveal>
         </Container>
@@ -36,40 +34,13 @@ export default function CoursesPage() {
 
       <section className="bg-white pb-24">
         <Container>
-          <CourseFilterTabs />
-
-          <Reveal delay={0.15}>
-            <div className="mx-auto mt-14 flex max-w-3xl flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-8 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
-              <p className="text-sm leading-6 text-slate-600">
-                <span className="font-semibold text-slate-900">New to cybersecurity?</span>{" "}
-                Start with the{" "}
-                <Link href="#workshop" className="font-semibold text-signal-700 hover:underline">
-                  3-Day Workshop
-                </Link>
-                .{" "}
-                <span className="font-semibold text-slate-900">Ready to go all-in?</span>{" "}
-                Join the{" "}
-                <Link
-                  href="/courses/soc-analyst-program"
-                  className="font-semibold text-signal-700 hover:underline"
-                >
-                  6-Month Program
-                </Link>
-                .
-              </p>
-              <Link
-                href="/courses/soc-analyst-program"
-                className="group inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-signal-700"
-              >
-                Compare details
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </div>
-          </Reveal>
+          <div className="mx-auto grid max-w-4xl gap-6">
+            {courses.map((course, i) => (
+              <CourseCard key={course.slug} course={course} delay={i * 0.08} />
+            ))}
+          </div>
         </Container>
       </section>
-
-      <WorkshopSection />
     </>
   );
 }

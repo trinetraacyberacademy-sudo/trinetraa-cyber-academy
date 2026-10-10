@@ -20,12 +20,6 @@ const includesByType: Record<string, string[]> = {
     "Real incident ticket queue across 50+ categories",
     "Course completion certificate",
   ],
-  workshop: [
-    "3 live instructor-led online sessions",
-    "Live demo of real alert triage inside SOC tools",
-    "Certificate of Participation",
-    "Live Q&A with working SOC mentors",
-  ],
 };
 
 export default async function RegisterPaymentPage({

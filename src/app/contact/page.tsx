@@ -23,7 +23,7 @@ export default function ContactPage() {
               Get in Touch
             </h1>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Questions about the program or workshop? Send us a message, or reach out
+              Questions about the program? Send us a message, or reach out
               directly.
             </p>
           </div>
